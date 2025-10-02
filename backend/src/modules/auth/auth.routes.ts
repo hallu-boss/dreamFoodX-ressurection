@@ -40,7 +40,32 @@ const router = Router();
  */
 router.post("/register", validateRegistration, register);
 
-// Logowanie użytkownika
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Login to existing account
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/LoginInput"
+ *     responses:
+ *       201:
+ *         description: User logged successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/LoginSuccess"
+ *       400:
+ *         description: Input data validation error
+ *       401:
+ *         description: Invalid email or password
+ *       500:
+ *         description: Internal server error
+ */
 router.post("/login", validateLogin, login);
 
 // Pobranie profilu zalogowanego użytkownika

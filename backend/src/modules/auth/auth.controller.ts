@@ -50,6 +50,20 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 // Logowanie użytkownika
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      LoginInput:
+ *          type: object
+ *          properties:
+ *              email:
+ *                  type: string
+ *                  example: "jan.kowalski@example.com"
+ *              password:
+ *                type: string
+ *                example: "secret123"
+ */
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
@@ -68,6 +82,39 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       { expiresIn: "24h" }
     );
 
+/**
+* @swagger
+* components:
+*   schemas:
+*     LoginSuccess:
+*       type: object
+*       properties:
+*         message:
+*           type: string
+*           example: "Login successful"
+*         token:
+*           type: string
+*           example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+*         user:
+*           type: object
+*           properties:
+*             id:
+*               type: string
+*               example: "652f1a0e3a6f2b001f43c1a7"
+*             name:
+*               type: string
+*               example: "Jan"
+*             surname:
+*               type: string
+*               description: Nazwisko użytkownika
+*               example: "Kowalski"
+*             email:
+*               type: string
+*               example: "jan.kowalski@example.com"
+*             cookingHours:
+*               type: integer
+*               example: 5
+*/
     res.status(200).json({
       message: "Login successful",
       token,
