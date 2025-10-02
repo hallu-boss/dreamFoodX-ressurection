@@ -10,10 +10,8 @@ export const errorHandler = (
   console.error(err);
 
   if (err instanceof BaseError) {
-    // Nasze własne błędy (ValidationError, AuthError)
     return res.status(err.statusCode).json({ message: err.message });
   }
 
-  // Domyślny błąd 500
   res.status(500).json({ message: "Internal server error" });
 };

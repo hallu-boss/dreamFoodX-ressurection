@@ -5,7 +5,39 @@ import { validateRegistration, validateLogin } from "./auth.validators";
 
 const router = Router();
 
-// Rejestracja nowego użytkownika
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: Endpoints związane z autentykacją użytkowników
+ */
+
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Rejestracja nowego użytkownika
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/RegisterInput"
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/RegisterSuccess"
+ *       400:
+ *         description: Input data validation error
+ *       409:
+ *         description: User with this email already exists
+ *       500:
+ *         description: Internal server error
+ */
 router.post("/register", validateRegistration, register);
 
 // Logowanie użytkownika
