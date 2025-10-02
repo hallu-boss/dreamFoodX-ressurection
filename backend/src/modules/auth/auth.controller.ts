@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import User from "./auth.model";
+import User from "../../mongo/models";
 import { AuthError } from "../../utils/errors";
 
 // Rejestracja nowego użytkownika
