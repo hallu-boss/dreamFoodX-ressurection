@@ -1,5 +1,6 @@
 import request from "supertest";
-import app from "../src/server";
+import { describe, it, expect, beforeAll, afterAll } from "@jest/globals";
+import { app } from "../src/app";
 
 describe("GET / - status message", () => {
     it("should return 201", async () => {
