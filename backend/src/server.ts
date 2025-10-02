@@ -1,7 +1,5 @@
 import { setupSwagger } from "./config/swagger";
-import express, { Request, Response } from "express";
 import dotenv from "dotenv";
-import authRouters from './modules/auth/auth.routes';
 import { app } from "./app";
 
 // wczytaj zmienne środowiskowe z pliku .env

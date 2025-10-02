@@ -8,6 +8,6 @@ describe("GET / - status message", () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("message"); // ValidationError message
-    expect(response.body.message).toContain("Backend serwisu przepisów działa 🚀");
+    expect(response.body.message).toContain("Server is ready 🚀");
   });
 });

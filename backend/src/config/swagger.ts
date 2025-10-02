@@ -11,7 +11,7 @@ const options = {
       description: "API do serwisu dreamFoodX",
     },
   },
-  apis: ["./src/modules/**/*.ts"],
+  apis: ["./src/**/*.ts"],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);

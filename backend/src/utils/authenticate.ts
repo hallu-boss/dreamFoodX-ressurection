@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { AuthError } from "../../utils/errors";
+import { AuthError } from "./errors";
 
 interface JwtPayload {
   id: string; // Mongo _id jako string
