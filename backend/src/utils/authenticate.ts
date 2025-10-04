@@ -13,7 +13,13 @@ export interface AuthenticatedRequest extends Request {
 }
 
 /**
- * Middleware do uwierzytelniania użytkowników poprzez token JWT
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 export const authenticate = (
   req: AuthenticatedRequest,

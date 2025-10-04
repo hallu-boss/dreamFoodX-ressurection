@@ -5,6 +5,42 @@ import { User } from "../../../mongo/models";
 
 const router = Router();
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     ProfileSuccess:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: string
+ *           example: "652f1a0e3a6f2b001f43c1a7"
+ *         name:
+ *           type: string
+ *           example: "Jan"
+ *         surname:
+ *           type: string
+ *           example: "Kowalski"
+ *         email:
+ *           type: string
+ *           example: "jan.kowalski@example.com"
+ *         cookingHours:
+ *           type: integer
+ *           example: 10
+ *         recipes:
+ *           type: array
+ *           items:
+ *             type: object
+ *             example: []
+ *         purchasedRecipes:
+ *           type: array
+ *           example: []
+ *         ingredients:
+ *           type: array
+ *           example: []
+ */
+
+
 export const getProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = (req as any).user.id;
@@ -34,6 +70,28 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+/**
+ * @swagger
+ * /api/auth/profile:
+ *   get:
+ *     summary: Gets profile of user
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Returns user profile data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ProfileSuccess'
+ *       401:
+ *         description: No or wrong token send
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
 router.get("/", authenticate, getProfile);
 
 export default router;
