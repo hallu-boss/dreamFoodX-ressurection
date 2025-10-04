@@ -1,10 +1,10 @@
 import request from "supertest";
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { describe, it, expect, beforeAll, afterAll } from "@jest/globals";
 import { app } from "../src/app";
 import { User } from "../src/mongo/models";
+import { generateToken } from "../src/utils/authenticate";
+
 
 const login_path = "/api/auth/login"
 describe("GET /api/auth/profile", () => {
@@ -27,7 +27,7 @@ describe("GET /api/auth/profile", () => {
         await user.save()
 
         userId = (user._id as string).toString();
-        token = jwt.sign({ id: userId, email: user.email }, process.env.JWT_SECRET || "fallback-secret");
+        token = generateToken({id: userId, email: user.email});
     });
 
     afterAll(async () => {

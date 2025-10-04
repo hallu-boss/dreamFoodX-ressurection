@@ -3,6 +3,7 @@ import { z } from "zod";
 import jwt from "jsonwebtoken";
 import { AuthError, ValidationError } from "../../../utils/errors";
 import { User } from "../../../mongo/models";
+import { generateToken } from "../../../utils/authenticate";
 
 const router = Router();
 
@@ -49,11 +50,7 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     // Generowanie JWT
-    const token = jwt.sign(
-      { id: user._id, email: user.email },
-      process.env.JWT_SECRET || "fallback-secret",
-      { expiresIn: "24h" }
-    );
+    const token = generateToken({id: (user._id as string), email: user.email})
 
     res.status(201).json({
       message: "User registered successfully",

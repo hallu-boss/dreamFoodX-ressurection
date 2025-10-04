@@ -12,6 +12,10 @@ export interface AuthenticatedRequest extends Request {
   user?: JwtPayload;
 }
 
+export const generateToken = ({id, email}: JwtPayload) => {
+  return jwt.sign({ id, email }, process.env.JWT_SECRET || "fallback-secret", { expiresIn: "24h" });
+}
+
 /**
  * @swagger
  * components:
