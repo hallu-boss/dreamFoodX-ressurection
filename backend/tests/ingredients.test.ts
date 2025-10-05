@@ -143,3 +143,69 @@ describe(`POST ${base_path}/add - success`, () => {
     expect(ingredientInDb).not.toBeNull();
   });
 });
+
+describe("POST /api/ingredients/add-multiple", () => {
+    let token: string;
+    let userId: string;
+
+    beforeAll(async () => {
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/dreamfood_test");
+    }
+
+    const user = await User.create({
+      name: "Test",
+      surname: "User",
+      email: "test@example.com",
+      password: "password123",
+      cookingHours: 5,
+    });
+
+    userId = (user._id as string).toString();
+    token = generateToken({id: userId, email: user.email});
+  });
+
+  afterAll(async () => {
+    if (mongoose.connection.db) await mongoose.connection.db.dropDatabase();
+    await mongoose.disconnect();
+  });
+
+  it("should add multiple ingredients successfully", async () => {
+    const response = await request(app)
+      .post("/api/ingredients/add-multiple")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        ingredients: [
+          { title: "Sugar", category: "Sweet", unit: "g" },
+          { title: "Salt", category: "Spice", unit: "g" },
+        ],
+      });
+
+    expect(response.status).toBe(201);
+    expect(response.body.message).toBe("Added 2 ingredients");
+    expect(response.body.ingredients).toHaveLength(2);
+
+    const dbIngredients = await Ingredient.find({ owner: userId });
+    expect(dbIngredients).toHaveLength(2);
+  });
+
+  it("should fail if ingredients field is missing", async () => {
+    const response = await request(app)
+      .post("/api/ingredients/add-multiple")
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe("Field 'ingredients' must be non empty array");
+  });
+
+  it("should fail if ingredients array is empty", async () => {
+    const response = await request(app)
+      .post("/api/ingredients/add-multiple")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ ingredients: [] });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe("Field 'ingredients' must be non empty array");
+  });
+});

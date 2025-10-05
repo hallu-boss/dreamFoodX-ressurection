@@ -59,6 +59,32 @@ const addIngredient = async (req: Request, res: Response) => {
   }
 };
 
+const addMultipleIngredients = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+    const { ingredients } = req.body;
+
+    if (!Array.isArray(ingredients) || ingredients.length === 0) {
+      return res.status(400).json({ error: "Field 'ingredients' must be non empty array" });
+    }
+
+    const docs = ingredients.map((i) => ({
+      category: i.category,
+      title: i.title,
+      unit: i.unit,
+      owner: userId,
+    }));    
+
+    const created = await Ingredient.insertMany(docs);
+    res.status(201).json({
+      message: `Added ${created.length} ingredients`,
+      ingredients: created,
+    });
+  } catch {
+    res.status(500).json({ error: "Could not add ingredients" });
+  }
+};
+
 const router = Router();
 
 /**
@@ -124,6 +150,7 @@ router.get("/user", authenticate, getIngredients);
  *              description: Could not add ingredient
  */
 router.post("/add", authenticate, addIngredient);
-// router.post("/add-multiple", authenticate, addMultipleIngredients);
+
+router.post("/add-multiple", authenticate, addMultipleIngredients);
 
 export default router;
