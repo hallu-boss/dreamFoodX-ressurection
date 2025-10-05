@@ -61,7 +61,48 @@ const addIngredient = async (req: Request, res: Response) => {
 
 const router = Router();
 
+/**
+ * @swagger
+ * /api/ingredients/public:
+ *  get:
+ *      tags:
+ *          - Ingredients
+ *      description: Gets a list of all ingredients that are available to all users (owner is null)
+ *      responses:
+ *          201:
+ *              description: Retrived data successfuly
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: "#/components/schemas/IngredientPublic"
+ *          401:
+ *              description: Could not load public ingredients
+ *      
+ */
 router.get("/public", getPublicIngredients);
+/**
+ * @swagger
+ * /api/ingredients/user:
+ *  get:
+ *      tags: [Ingredients]
+ *      description: Gets a list of user ingredients
+ *      security:
+ *          - bearerAuth: []
+ *      responses:
+ *          201:
+ *              description: Retrived data successfuly
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: "#/components/schemas/IngredientUser"
+ *          401:
+ *              description: Could not load user ingredients
+ *      
+ */
 router.get("/user", authenticate, getIngredients);
 
 // router.post("/add", authenticate, addIngredient);
