@@ -3,86 +3,137 @@ import { Ingredient, RecipeStep } from "../../mongo/models";
 import { authenticate } from "../../utils/authenticate";
 
 const getPublicIngredients = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
+    req: Request,
+    res: Response,
+    next: NextFunction
 ) => {
-  try {
-    const ingredients = await Ingredient.find({ owner: null });
-    if (ingredients.length === 0) {
-        res.status(402).json({ message: "No public ingredients" });
+    try {
+        const ingredients = await Ingredient.find({ owner: null });
+        if (ingredients.length === 0) {
+            res.status(402).json({ message: "No public ingredients" });
+        }
+        res.json(ingredients);
+    } catch (error) {
+        res.status(401).json({ message: "Could not load public ingredients" });
     }
-    res.json(ingredients);
-  } catch (error) {
-    res.status(401).json({ message: "Could not load public ingredients" });
-  }
 };
 
 const getIngredients = async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user.id;
+    try {
+        const userId = (req as any).user.id;
 
-    const ingredients = await Ingredient.find({ owner: userId});
+        const ingredients = await Ingredient.find({ owner: userId });
 
-    // RecipeStep ingredient protection
-    const ingredientsWithDeletable = await Promise.all(
-      ingredients.map(async (ingredient) => {
-        const used = await RecipeStep.exists({ ingredient: ingredient._id });
-        return {
-          ...ingredient.toObject(),
-          deletable: !used,
-        };
-      })
-    );
+        // RecipeStep ingredient protection
+        const ingredientsWithDeletable = await Promise.all(
+            ingredients.map(async (ingredient) => {
+                const used = await RecipeStep.exists({ ingredient: ingredient._id });
+                return {
+                    ...ingredient.toObject(),
+                    deletable: !used,
+                };
+            })
+        );
 
-    res.json(ingredientsWithDeletable);
-  } catch {
-    res.status(402).json({ error: "Could not load user ingredients" });
-  }
+        res.json(ingredientsWithDeletable);
+    } catch {
+        res.status(402).json({ error: "Could not load user ingredients" });
+    }
 };
 
 const addIngredient = async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user.id;
-    const { category, title, unit } = req.body;
+    try {
+        const userId = (req as any).user.id;
+        const { category, title, unit } = req.body;
 
-    const ingredient = await Ingredient.create({
-      category,
-      title,
-      unit,
-      owner: userId,
-    });
+        const ingredient = await Ingredient.create({
+            category,
+            title,
+            unit,
+            owner: userId,
+        });
 
-    res.status(201).json(ingredient);
-  } catch {
-    res.status(402).json({ error: "Could not add ingredient" });
-  }
+        res.status(201).json(ingredient);
+    } catch {
+        res.status(402).json({ error: "Could not add ingredient" });
+    }
 };
 
 const addMultipleIngredients = async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user.id;
-    const { ingredients } = req.body;
+    try {
+        const userId = (req as any).user.id;
+        const { ingredients } = req.body;
 
-    if (!Array.isArray(ingredients) || ingredients.length === 0) {
-      return res.status(400).json({ error: "Field 'ingredients' must be non empty array" });
+        if (!Array.isArray(ingredients) || ingredients.length === 0) {
+            return res.status(400).json({ error: "Field 'ingredients' must be non empty array" });
+        }
+
+        const docs = ingredients.map((i) => ({
+            category: i.category,
+            title: i.title,
+            unit: i.unit,
+            owner: userId,
+        }));
+
+        const created = await Ingredient.insertMany(docs);
+        res.status(201).json({
+            message: `Added ${created.length} ingredients`,
+            ingredients: created,
+        });
+    } catch {
+        res.status(500).json({ error: "Could not add ingredients" });
     }
+};
 
-    const docs = ingredients.map((i) => ({
-      category: i.category,
-      title: i.title,
-      unit: i.unit,
-      owner: userId,
-    }));    
+export const updateIngredient = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const userId = (req as any).user.id;
+        const ingredientId = parseInt(req.params.id);
 
-    const created = await Ingredient.insertMany(docs);
-    res.status(201).json({
-      message: `Added ${created.length} ingredients`,
-      ingredients: created,
-    });
-  } catch {
-    res.status(500).json({ error: "Could not add ingredients" });
-  }
+        const { category, title, unit } = req.body;
+
+        // Walidacja ID
+        if (isNaN(ingredientId)) {
+            return res.status(400).json({ error: "Bad ingredient ID" });
+        }
+
+        // Walidacja danych wejściowych
+        if (!category || !title || !unit) {
+            return res.status(400).json({
+                error: "All fields (category, title, unit) are required",
+            });
+        }
+
+        try {
+            // Sprawdź czy składnik należy do użytkownika
+            const existingIngredient = await Ingredient.findOne({ _id: ingredientId, owner: userId });
+
+            if (!existingIngredient) {
+                return res.status(404).json({
+                    error:
+                        "Ingredient could not be found",
+                });
+            }
+
+            existingIngredient.category = category;
+            existingIngredient.title = title;
+            existingIngredient.unit = unit;
+
+            const updatedIngredient = await existingIngredient.save();
+
+            return res.status(200).json(updatedIngredient);
+        } catch (error) {
+            return res
+                .status(500)
+                .json({ error: "Could not update ingredient" });
+        }
+    } catch (error) {
+        next(error);
+    }
 };
 
 const router = Router();
@@ -172,5 +223,8 @@ router.post("/add", authenticate, addIngredient);
  *              description: Could not add ingredient
  */
 router.post("/add-multiple", authenticate, addMultipleIngredients);
+
+router.patch("/:id", authenticate, updateIngredient);
+// router.delete("/:id", authenticate, deleteIngredient);
 
 export default router;
