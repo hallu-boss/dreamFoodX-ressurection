@@ -22,3 +22,11 @@ components:
         unit: kg
         owner: 652f59f40f1b2a001f2c4a12
         deletable: true
+    IngredientAdd:
+      type: object
+      example:
+        _id: 650a624c88593a100f7234c2
+        category: Warzywa
+        title: Pomidor
+        unit: kg
+        owner: 652f59f40f1b2a001f2c4a12

@@ -105,7 +105,25 @@ router.get("/public", getPublicIngredients);
  */
 router.get("/user", authenticate, getIngredients);
 
-// router.post("/add", authenticate, addIngredient);
+/**
+ * @swagger
+ * /api/ingredients/add:
+ *  get:
+ *      tags: [Ingredients]
+ *      description: Adds new ingredient to user list
+ *      security:
+ *          - bearerAuth: []
+ *      responses:
+ *          201:
+ *              description: Added new ingredient
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: "#/components/schemas/IngredientAdd"
+ *          402:
+ *              description: Could not add ingredient
+ */
+router.post("/add", authenticate, addIngredient);
 // router.post("/add-multiple", authenticate, addMultipleIngredients);
 
 export default router;

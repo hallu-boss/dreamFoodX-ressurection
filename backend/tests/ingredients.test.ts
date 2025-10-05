@@ -96,3 +96,50 @@ describe(`GET ${base_path}/user - success`, () => {
     expect(deletableFlags).toEqual(expect.arrayContaining([true, true, false]));
   });
 });
+
+describe(`POST ${base_path}/add - success`, () => {
+  let token: string;
+  let userId: string;
+
+  beforeAll(async () => {
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/dreamfood_test");
+    }
+
+    const user = await User.create({
+      name: "Test",
+      surname: "User",
+      email: "test@example.com",
+      password: "password123",
+      cookingHours: 5,
+    });
+
+    userId = (user._id as string).toString();
+    token = generateToken({id: userId, email: user.email});
+  });
+
+  afterAll(async () => {
+    if (mongoose.connection.db) await mongoose.connection.db.dropDatabase();
+    await mongoose.disconnect();
+  });
+
+  it("should add new ingredient to test user", async () => {
+    const res = await request(app)
+      .post(`${base_path}/add`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        category: "Nabiał",
+        title: "Mleko",
+        unit: "ml"
+      });
+
+    expect(res.status).toBe(201);
+    expect(res.body).toHaveProperty("_id");
+    expect(res.body.category).toBe("Nabiał");
+    expect(res.body.title).toBe("Mleko");
+    expect(res.body.unit).toBe("ml");
+
+    const ingredientInDb = await Ingredient.findById(res.body._id);
+    expect(ingredientInDb).not.toBeNull();
+  });
+});
