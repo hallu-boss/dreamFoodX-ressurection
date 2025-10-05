@@ -151,6 +151,26 @@ router.get("/user", authenticate, getIngredients);
  */
 router.post("/add", authenticate, addIngredient);
 
+/**
+ * @swagger
+ * /api/ingredients/add-multiple:
+ *  get:
+ *      tags: [Ingredients]
+ *      description: Adds multiple new ingredients to user list
+ *      security:
+ *          - bearerAuth: []
+ *      responses:
+ *          201:
+ *              description: Added new ingredients
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: array
+ *                          items:
+ *                              $ref: "#/components/schemas/IngredientAdd"
+ *          402:
+ *              description: Could not add ingredient
+ */
 router.post("/add-multiple", authenticate, addMultipleIngredients);
 
 export default router;
