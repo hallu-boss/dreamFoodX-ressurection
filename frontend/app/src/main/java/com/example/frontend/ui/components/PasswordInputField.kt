@@ -17,12 +17,15 @@ import androidx.compose.ui.unit.dp
 fun PasswordInputField(
     password: String,
     onPasswordChange: (String) -> Unit,
+    passwordError: Boolean = false,
+    label: String = "Hasło",
     modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         value = password,
         onValueChange = onPasswordChange,
-        label = { Text("Hasło") },
+        isError = passwordError,
+        label = { Text(label) },
         visualTransformation = PasswordVisualTransformation(),
         modifier = modifier
             .fillMaxWidth()
