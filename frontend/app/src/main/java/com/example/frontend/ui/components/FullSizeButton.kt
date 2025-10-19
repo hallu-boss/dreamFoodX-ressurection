@@ -20,7 +20,7 @@ fun FullSizeButton(
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth().shadow(20.dp, RoundedCornerShape(12.dp)),
+        modifier = modifier.fillMaxWidth().shadow(10.dp, RoundedCornerShape(3.dp)),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
