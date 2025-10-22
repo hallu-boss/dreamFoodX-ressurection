@@ -2,19 +2,13 @@ package com.example.frontend.ui.screens
 
 
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,17 +16,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.frontend.R
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.navigation.NavHostController
+import com.example.firstcomposeap.ui.navigation.main.Screen
 import com.example.frontend.ui.components.FullSizeButton
 import com.example.frontend.ui.components.InputField
-import com.example.frontend.ui.components.LoginBySocialmedia
 import com.example.frontend.ui.components.PasswordInputField
 import com.example.frontend.ui.components.validateEmail
 
 
 @Composable
-fun RegisterScreen() {
+fun RegisterScreen(navController: NavHostController) {
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
@@ -91,20 +84,23 @@ fun RegisterScreen() {
                 text = "Zarejestruj się",
                 onClick = {
                 /* TODO obsługa Rejestracji */
+                    navController.navigate(Screen.Home.route)
                     if( isError || email.isEmpty() ) {
                         Toast.makeText(context, "Email musi być w formie example@example.pl", Toast.LENGTH_LONG).show()
                     }
-                    if( isPasswordError || password.isEmpty() || confirmPassword.isEmpty()) {
+                    else if( isPasswordError || password.isEmpty() || confirmPassword.isEmpty()) {
                         Toast.makeText(context, "Hasła muszą być takie same", Toast.LENGTH_LONG).show()
                     }
+                    else {
 
+                    }
 
                 }
             )
             Spacer(modifier = Modifier.height(16.dp))
             FullSizeButton(
                 text = "Anuluj",
-                onClick = {  /* TODO obsługa Logowania */ }
+                onClick = {  navController.navigate(Screen.Login.route) }
             )
 
 

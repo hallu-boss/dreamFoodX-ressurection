@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.R
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.navigation.NavHostController
+import com.example.firstcomposeap.ui.navigation.main.Screen
 import com.example.frontend.ui.components.FullSizeButton
 import com.example.frontend.ui.components.InputField
 import com.example.frontend.ui.components.LoginBySocialmedia
@@ -30,11 +32,10 @@ import com.example.frontend.ui.components.validateEmail
 
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavHostController) {
     var email by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
     var password by remember { mutableStateOf("") }
-
 
 
     Box(
@@ -80,13 +81,16 @@ fun LoginScreen() {
             Spacer(modifier = Modifier.height(16.dp))
             FullSizeButton(
                 text = "Zaloguj się",
-                onClick = {  /* TODO obsługa Logowania */ }
+                onClick = {
+                    /* TODO: Logika logowania */
+                    navController.navigate(Screen.Home.route)
+                }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
             FullSizeButton(
                 text = "Zarejestruj się",
-                onClick = {  /* TODO obsługa Rejestracji */ }
+                onClick = {  navController.navigate(Screen.Register.route) }
             )
 
 
