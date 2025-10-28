@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
                     composable(Screen.Test.route) { TestScreen(navController, loginViewModel = loginViewModel) }
                     composable("recipeDetail/{recipeId}") { backStackEntry ->
                         val recipeId = backStackEntry.arguments?.getString("recipeId") ?: return@composable
-                        RecipeDetailScreen(recipeId, recipeView, navController)
+                        RecipeDetailScreen(recipeId, recipeView, navController, loginViewModel)
                     }
                 }
             }
