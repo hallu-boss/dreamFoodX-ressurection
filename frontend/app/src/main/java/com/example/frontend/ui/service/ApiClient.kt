@@ -6,7 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiClient {
-    private const val BASE_URL = "http://10.0.2.2:5000/api/auth/"
+    private const val BASE_URL = "http://10.0.2.2:5000/api/"
     // 10.0.2.2 to adres hosta komputera gdzie działa emulator
 
     private val client = OkHttpClient.Builder()
