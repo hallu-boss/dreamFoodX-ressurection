@@ -15,6 +15,7 @@ import com.example.frontend.ui.screens.ProfileScreen
 import com.example.frontend.ui.screens.RecipeScreen
 import com.example.frontend.ui.screens.RegisterScreen
 import com.example.frontend.ui.screens.ShoppingBasketScreen
+import com.example.frontend.ui.screens.TestScreen
 import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.theme.DreamFoodAppTheme
 
@@ -25,12 +26,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             val loginViewModel: LoginViewModel = viewModel()
+            loginViewModel.login("testUser@testUser.testUser", "testUser")
 
             DreamFoodAppTheme {
                 val navController: NavHostController = rememberNavController()
+
+
                 NavHost(
                     navController = navController,
-                    startDestination = Screen.Login.route
+                    startDestination = Screen.Test.route
                 ) {
                     composable(Screen.Register.route) { RegisterScreen(navController) }
                     composable(Screen.Login.route) { LoginScreen(navController, viewModel = loginViewModel) }
@@ -38,6 +42,7 @@ class MainActivity : ComponentActivity() {
                     composable(Screen.Profile.route) { ProfileScreen(navController) }
                     composable(Screen.Shopping.route ){ ShoppingBasketScreen(navController) }
                     composable(Screen.Recipes.route) { RecipeScreen(navController) }
+                    composable(Screen.Test.route) { TestScreen(navController, loginViewModel = loginViewModel) }
                 }
             }
         }

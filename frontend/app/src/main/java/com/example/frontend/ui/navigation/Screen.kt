@@ -7,4 +7,6 @@ sealed class Screen(val route: String) {
     object Register : Screen("register")
     object Shopping : Screen("Koszyk")
     object Recipes : Screen("Moje przepisy")
+
+    object Test : Screen("Testowy")
 }
