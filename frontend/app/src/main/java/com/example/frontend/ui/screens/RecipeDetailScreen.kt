@@ -42,6 +42,7 @@ import com.example.frontend.ui.service.ApiClient
 import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.service.RecipeViewModel
 import  com.example.frontend.ui.components.ErrorPlopup
+import com.example.frontend.ui.components.getPrice
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
@@ -137,39 +138,27 @@ fun RecipeDetailScreen(recipeId: String,
 @Composable
 fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit ) {
     if (recipeDetail != null) {
-        if( recipeDetail.permission) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                recipeDetail.image?.let { imageUrl ->
-                    NetworkImage(url = imageUrl, contentDescription = recipeDetail.title)
-                }
-                Text(
-                    recipeDetail.title,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text("Kategoria: ${recipeDetail.category}")
-                Text("Cena: ${recipeDetail.price}")
-                Text("Autor: ${recipeDetail.author.name} ${recipeDetail.author.surname}")
-                Spacer(Modifier.height(8.dp))
-                Text("Opis: ${recipeDetail.description ?: "Brak opisu" }" )
-                Text("Dostęp: ${if (recipeDetail.permission) "Przyznany" else "Niedozwolony"}")
+        Column(modifier = Modifier.padding(16.dp)) {
+            recipeDetail.image?.let { imageUrl ->
+                NetworkImage(url = imageUrl, contentDescription = recipeDetail.title)
             }
-        }
-        else {
-            Column(modifier = Modifier.padding(16.dp)) {
-                recipeDetail.image?.let { imageUrl ->
-                    NetworkImage(url = imageUrl, contentDescription = recipeDetail.title)
-                }
-                Text(
-                    recipeDetail.title,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text("Cena: ${recipeDetail.price}")
+            Text(
+                recipeDetail.title,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text("Kategoria: ${recipeDetail.category}")
+            Text("Autor: ${recipeDetail.author.name} ${recipeDetail.author.surname}")
+            Text("Cena: ${getPrice(recipeDetail.price)}")
+            Text("Opis: ${recipeDetail.description ?: "Brak opisu" }" )
 
+            if( recipeDetail.permission) {
+//                TODO: dodać kroki przepisu
             }
-            ErrorPlopup(errorMessage = "Należy zakupić przepis przed zobaczeniem szczegółów",
-                onDismiss = onDismiss)
+            else {
+                ErrorPlopup(errorMessage = "Należy zakupić przepis przed zobaczeniem szczegółów",
+                    onDismiss = onDismiss)
+            }
         }
     } else {
         Text("Ładowanie przepisu...")
