@@ -38,12 +38,12 @@ class RecipeViewModel : ViewModel() {
 
 
     var error by mutableStateOf<String?>(null)
-    fun getRecipeById(recipeId: Int) {
+    fun getRecipeById(recipeId: Int, token : String) {
         viewModelScope.launch {
             isLoading = true
             error = null
             try {
-                val response = ApiClient.api.getRecipe(recipeId)
+                val response = ApiClient.getApi(token).getRecipe(recipeId)
                 if (response.isSuccessful) {
                     recipeDetail = response.body()
                 } else {

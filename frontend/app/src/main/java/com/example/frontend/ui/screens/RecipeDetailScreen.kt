@@ -49,21 +49,14 @@ fun RecipeDetailScreen(recipeId: String,
                        ) {
     var selectedItem by remember { mutableStateOf("Strona główna") }
 
-    var recipeDetail by mutableStateOf<RecipeResponse?>(null)
+    val recipeDetail = viewModel.recipeDetail
     val isLoading = viewModel.isLoading
     val error = viewModel.error
-
     val token = loginViewModel.token
-    if (token != null) {
-        LaunchedEffect(recipeId, token) {
-            try {
-                val response = ApiClient.getApi(token).getRecipe(recipeId.toInt())
-                if (response.isSuccessful) {
-                    recipeDetail = response.body()
-                }
-            } catch (e: Exception) {
-                Log.e("RecipeVM", "Exception: ${e.message}")
-            }
+
+    LaunchedEffect(recipeId, token) {
+        token?.let {
+            viewModel.getRecipeById(recipeId.toInt(), it)
         }
     }
 
