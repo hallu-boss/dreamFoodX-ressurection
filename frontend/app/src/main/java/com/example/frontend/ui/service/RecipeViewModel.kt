@@ -1,6 +1,7 @@
 package com.example.frontend.ui.service
 
 import RecipeCover
+import RecipeResponse
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -26,6 +27,30 @@ class RecipeViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 errorMessage = e.localizedMessage
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    var recipeDetail by mutableStateOf<RecipeResponse?>(null)
+        private set
+
+
+    var error by mutableStateOf<String?>(null)
+    fun getRecipeById(recipeId: Int) {
+        viewModelScope.launch {
+            isLoading = true
+            error = null
+            try {
+                val response = ApiClient.api.getRecipe(recipeId)
+                if (response.isSuccessful) {
+                    recipeDetail = response.body()
+                } else {
+                    error = "Błąd: ${response.code()}"
+                }
+            } catch (e: Exception) {
+                error = e.localizedMessage
             } finally {
                 isLoading = false
             }

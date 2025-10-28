@@ -23,4 +23,27 @@ object ApiClient {
             .build()
             .create(ApiService::class.java)
     }
+
+    private fun getAuthClient(token: String) = OkHttpClient.Builder()
+        .addInterceptor(HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        })
+        .addInterceptor { chain ->
+            val request = chain.request().newBuilder()
+                .addHeader("Authorization", "Bearer $token")
+                .build()
+            chain.proceed(request)
+        }
+        .build()
+
+    fun getApi(token: String): ApiService {
+        val client = getAuthClient(token)
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiService::class.java)
+    }
+
 }

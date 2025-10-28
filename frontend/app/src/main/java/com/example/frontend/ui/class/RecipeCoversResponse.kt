@@ -32,3 +32,40 @@ data class Pagination(
     val limit: Int,
     val totalPages: Int
 )
+
+data class RecipeResponse(
+    val id: Int,
+    val createdAt: String,
+    val author: Author,
+    val title: String,
+    val description: String?,
+    val category: String,
+    val price: Double,
+    val image: String?,
+    val steps: List<RecipeStep>?,
+    val reviews: List<Review>?,
+    val permission: Boolean
+)
+
+data class RecipeStep(
+    val id: Int,
+    val title: String,
+    val stepType: String,
+    val description: String,
+    val ingredient: Ingredient?,
+    val amount: Double?,
+    val time: Int?,
+    val temperature: Int?,
+    val mixSpeed: Int?
+)
+
+data class Ingredient(
+    val title: String,
+    val unit: String
+)
+
+data class Review(
+    val id: Int,
+    val comment: String?,
+    val rating: Int?
+)
