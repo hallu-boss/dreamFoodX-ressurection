@@ -28,8 +28,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val navController = rememberNavController()
-            var recipeView : RecipeViewModel = viewModel ();
+            val recipeView : RecipeViewModel = viewModel ()
             val loginViewModel: LoginViewModel = viewModel()
             loginViewModel.login("testUser@testUser.testUser", "testUser")
 

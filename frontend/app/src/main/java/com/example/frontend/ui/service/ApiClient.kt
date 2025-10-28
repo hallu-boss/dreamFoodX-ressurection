@@ -15,7 +15,7 @@ object ApiClient {
         })
         .build()
 
-    val api: ApiService by lazy {
+    val api: ApiService by lazy { // zapytanie bez autoryzacji
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
@@ -36,7 +36,7 @@ object ApiClient {
         }
         .build()
 
-    fun getApi(token: String): ApiService {
+    fun getApi(token: String): ApiService { // zapytanie z autoryzacją
         val client = getAuthClient(token)
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
