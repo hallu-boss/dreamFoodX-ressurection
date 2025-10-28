@@ -37,9 +37,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.MainLayout
+import com.example.frontend.ui.components.NetworkImage
 import com.example.frontend.ui.service.ApiClient
 import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.service.RecipeViewModel
+import  com.example.frontend.ui.components.ErrorPlopup
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
@@ -103,14 +105,14 @@ fun RecipeDetailScreen(recipeId: String,
                             )
                         }
                         Spacer(modifier = Modifier.width(20.dp))
-                        Text("Szczegóły ")
+                        Text("Szczegóły Przepisu", fontSize = 30.sp)
                     }
-
-
                     Spacer(modifier = Modifier.height(16.dp))
 
 
-                    Box(modifier = Modifier.padding(10.dp).fillMaxSize()) {
+                    Box(modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxSize()) {
                         when {
                             isLoading -> CircularProgressIndicator(
                                 modifier = Modifier.align(
@@ -124,21 +126,7 @@ fun RecipeDetailScreen(recipeId: String,
                                 modifier = Modifier.align(Alignment.Center)
                             )
 
-                            recipeDetail != null -> {
-                                Column(modifier = Modifier.padding(16.dp)) {
-                                    Text(
-                                        recipeDetail!!.title,
-                                        fontSize = 24.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Text("Kategoria: ${recipeDetail!!.category}")
-                                    Text("Cena: ${recipeDetail!!.price}")
-                                    Text("Autor: ${recipeDetail!!.author.name} ${recipeDetail!!.author.surname}")
-                                    Spacer(Modifier.height(8.dp))
-                                    Text(recipeDetail!!.description ?: "Brak opisu")
-                                    Text("Dostęp: ${if (recipeDetail!!.permission ) "Przyznany" else "Niedozwolony"}")
-                                }
-                            }
+                            else -> RecipeDetailContent(recipeDetail, onDismiss = {navController.popBackStack()})
                         }
                     }
                 }
@@ -146,3 +134,46 @@ fun RecipeDetailScreen(recipeId: String,
         }
     }
 }
+@Composable
+fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit ) {
+    if (recipeDetail != null) {
+        if( recipeDetail.permission) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                recipeDetail.image?.let { imageUrl ->
+                    NetworkImage(url = imageUrl, contentDescription = recipeDetail.title)
+                }
+                Text(
+                    recipeDetail.title,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text("Kategoria: ${recipeDetail.category}")
+                Text("Cena: ${recipeDetail.price}")
+                Text("Autor: ${recipeDetail.author.name} ${recipeDetail.author.surname}")
+                Spacer(Modifier.height(8.dp))
+                Text("Opis: ${recipeDetail.description ?: "Brak opisu" }" )
+                Text("Dostęp: ${if (recipeDetail.permission) "Przyznany" else "Niedozwolony"}")
+            }
+        }
+        else {
+            Column(modifier = Modifier.padding(16.dp)) {
+                recipeDetail.image?.let { imageUrl ->
+                    NetworkImage(url = imageUrl, contentDescription = recipeDetail.title)
+                }
+                Text(
+                    recipeDetail.title,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text("Cena: ${recipeDetail.price}")
+
+            }
+            ErrorPlopup(errorMessage = "Należy zakupić przepis przed zobaczeniem szczegółów",
+                onDismiss = onDismiss)
+        }
+    } else {
+        Text("Ładowanie przepisu...")
+    }
+}
+
+
