@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -43,7 +44,7 @@ private fun getStarColor(ocena: Double): Color {
     }
 }
 
-private fun getPrice(cena : Double) : String {
+fun getPrice(cena : Double) : String {
     return when {
         cena == 0.toDouble() -> "Darmowy"
         else -> String.format("%.2f zł", cena)
@@ -72,20 +73,36 @@ fun RecipeCoverItem(recipe: RecipeCover,
         Column {
             Row {
                 Icon(imageVector = Icons.Default.Star,
-                    contentDescription = "Ulubione",
+                    contentDescription = "Ocena użytkowników",
                     tint = getStarColor(recipe.averageRating),
-                    modifier = Modifier.size(20.dp))
-                Text(" ${recipe.averageRating}", color = getStarColor(recipe.averageRating))
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                Text("${recipe.averageRating}", color = getStarColor(recipe.averageRating))
 
-                Spacer(modifier = Modifier.width(40.dp))
+                Spacer(modifier = Modifier.width(20.dp))
                 Text("Kategoria: ${recipe.category}")
+                Spacer(modifier = Modifier.width(20.dp))
+
+                Icon(imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Autor",
+                    tint = Color.White,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                Text("${recipe.author.name} ${recipe.author.surname}")
+
             }
             Spacer(modifier = Modifier.height(4.dp))
+
+
             Row {
                 Icon(imageVector = Icons.Default.ShoppingCart,
                     contentDescription = "Cena",
                     tint = Color.White,
-                    modifier = Modifier.size(20.dp))
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(5.dp))
                 Text(getPrice(recipe.price))
 
                 Spacer(modifier = Modifier.width(40.dp))
@@ -96,6 +113,7 @@ fun RecipeCoverItem(recipe: RecipeCover,
                     modifier = Modifier.size(20.dp),
                     colorFilter = ColorFilter.tint(Color.White)
                 )
+                Spacer(modifier = Modifier.width(5.dp))
                 Text(recipe.cookingTime)
             }
         }
