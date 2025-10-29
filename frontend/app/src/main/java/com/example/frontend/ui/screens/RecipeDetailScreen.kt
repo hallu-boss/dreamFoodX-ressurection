@@ -1,8 +1,11 @@
 package com.example.frontend.ui.screens
 
+import Ingredient
 import RecipeResponse
+import RecipeStep
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +17,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -136,13 +143,23 @@ fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit ) {
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
-            Text("Kategoria: ${recipeDetail.category}")
-            Text("Autor: ${recipeDetail.author.name} ${recipeDetail.author.surname}")
-            Text("Cena: ${getPrice(recipeDetail.price)}")
-            Text("Opis: ${recipeDetail.description ?: "Brak opisu" }" )
+            Spacer(modifier = Modifier.height(10.dp))
+
+            basicInformation(recipeDetail)
+            Spacer(modifier = Modifier.height(10.dp))
+
+            IngredientList(recipeDetail.steps)
+            Spacer(modifier = Modifier.height(10.dp))
 
             if( recipeDetail.permission) {
-//                TODO: dodać kroki przepisu
+//                LazyColumn(
+//                    verticalArrangement = Arrangement.spacedBy(8.dp),
+//                    modifier = Modifier.fillMaxSize()
+//                ) {
+//                    items (recipeDetail.steps ?: emptyList() ) { step ->
+//                        stepDetail(step = step)
+//                    }
+//                }
             }
             else {
                 ErrorPlopup(errorMessage = "Należy zakupić przepis przed zobaczeniem szczegółów",
@@ -155,3 +172,119 @@ fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit ) {
 }
 
 
+
+
+@Composable
+fun stepDetail(step: RecipeStep) {
+    Column (
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape = RoundedCornerShape(20.dp))
+            .background(Color.DarkGray)
+    )
+    {
+
+        Text(step.title)
+        Spacer(modifier = Modifier.height(5.dp))
+        Text(step.stepType)
+        Spacer(modifier = Modifier.height(5.dp))
+        Text(step.description)
+        Spacer(modifier = Modifier.height(5.dp))
+        Text("${step.amount}")
+        Spacer(modifier = Modifier.height(5.dp))
+        Text("${step.temperature}")
+        Spacer(modifier = Modifier.height(5.dp))
+        Text("${step.mixSpeed}")
+        Spacer(modifier = Modifier.height(5.dp))
+
+    }
+}
+
+@Composable
+fun basicInformation(recipeDetail: RecipeResponse ) {
+    Column (
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape = RoundedCornerShape(20.dp))
+            .background(Color.DarkGray)
+    )
+    {
+        Spacer(modifier = Modifier.height(5.dp))
+        Text(
+            text = "Podstawowe informacje",
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Text("Kategoria: ${recipeDetail.category}")
+        Text("Autor: ${recipeDetail.author.name} ${recipeDetail.author.surname}")
+        Text("Cena: ${getPrice(recipeDetail.price)}")
+        Text("Opis: ${recipeDetail.description ?: "Brak opisu" }" )
+        Spacer(modifier = Modifier.height(10.dp))
+    }
+}
+
+@Composable
+fun IngredientList(steps: List<RecipeStep>?) {
+
+    val list: List<Pair<Ingredient, Double>>  = getCumulativeIngredients(steps?: emptyList())
+
+    Column (
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape = RoundedCornerShape(20.dp))
+            .background(Color.DarkGray)
+    )
+    {
+        Spacer(modifier = Modifier.height(5.dp))
+        Text(
+            text = "Składniki",
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        list.forEach { (ingredient, total) ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = ingredient.title,
+                    color = Color.White,
+                    fontSize = 16.sp
+                )
+                Text(
+                    text = "${"%.2f".format(total)} ${ingredient.unit}",
+                    color = Color.LightGray,
+                    fontSize = 16.sp
+                )
+            }
+        }
+
+        if (list.isEmpty()) {
+            Text(
+                text = "Brak składników",
+                color = Color.Gray,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+    }
+}
+
+
+fun getCumulativeIngredients(steps: List<RecipeStep>): List<Pair<Ingredient, Double>> {
+    return steps
+        .filter { it.ingredient != null && it.amount != null }
+        .groupBy { it.ingredient!! }
+        .map { (ingredient, stepList) ->
+            val totalAmount = stepList.sumOf { it.amount ?: 0.0 }
+            ingredient to totalAmount
+        }
+}
