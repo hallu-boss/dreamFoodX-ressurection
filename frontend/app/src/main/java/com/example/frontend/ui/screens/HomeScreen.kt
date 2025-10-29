@@ -74,6 +74,10 @@ fun HomeScreen(navController: NavHostController,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text("Dostępne przeisy ", fontSize = 40.sp)
+                Spacer(modifier = Modifier.height(25.dp))
+                Text("Witaj, ${user?.name} ${user?.surname}", fontSize = 24.sp)
+                Spacer(modifier = Modifier.height(20.dp))
+
                 Row ( modifier = Modifier.fillMaxWidth()) {
                     OutlinedTextField(
                         value = searchQuery,
@@ -90,10 +94,7 @@ fun HomeScreen(navController: NavHostController,
                         onCategorySelected = { selectedCategory = it }
                     )
                 }
-
-                Spacer(modifier = Modifier.height(55.dp))
-                Text("Witaj, ${user?.name} ${user?.surname}", fontSize = 24.sp)
-                Spacer(modifier = Modifier.height(25.dp))
+                Spacer(Modifier.width(15.dp))
 
                 when {
                     recipeView.isLoading -> {
