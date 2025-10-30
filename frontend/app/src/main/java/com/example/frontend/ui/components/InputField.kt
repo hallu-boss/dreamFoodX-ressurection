@@ -21,7 +21,7 @@ fun validateEmail(input: String): Boolean {
 @Composable
 fun InputField (
     value: String,
-    isError: Boolean,
+    isError: Boolean = false,
     onValueChange: (String) -> Unit,
     label: String = "Input",
     modifier: Modifier = Modifier

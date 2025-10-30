@@ -1,15 +1,53 @@
-import { setupSwagger } from "./config/swagger";
-import dotenv from "dotenv";
-import { app } from "./app";
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import * as swaggerUi from 'swagger-ui-express';
+import authRoutes from './routes/auth.routes';
+import healthRoute from './routes/health.routes';
+import ingredientsRoute from './routes/ingredients.routes';
+import recipeRoute from './routes/recipe.routes';
+import cartRouter from './routes/cart.routes';
+import { orderRoutes } from './routes/order.routes';
+import { errorHandler } from './middleware/errorHandler';
+import swaggerSpec from './swagger.config';
 
-// wczytaj zmienne środowiskowe z pliku .env
 dotenv.config();
 
-setupSwagger(app);
+const app = express();
+const port = process.env.PORT || 5000;
 
-// pobieramy port z env albo domyślnie 3000
-const PORT = process.env.PORT || 3000;
+// Middleware
+app.use(cors());
+app.use(express.json());
 
-app.listen(PORT, () => {
-  console.log(`✅ Server is running on http://localhost:${PORT}`);
+// Swagger documentation
+app.use('/api-docs', swaggerUi.serve);
+app.use('/api-docs', swaggerUi.setup(swaggerSpec));
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/ingredients', ingredientsRoute);
+app.use('/api', healthRoute);
+app.use('/api/recipe', recipeRoute);
+app.use('/api/cart', cartRouter);
+app.use('/api/orders', orderRoutes);
+
+app.get('/', (req, res) => {
+  res.send(
+    'API działa prawidłowo. Użyj /api/health aby sprawdzić status. Dokumentacja dostępna pod /api-docs'
+  );
+});
+
+// Error handling middleware
+app.use(errorHandler);
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+  console.log(
+    `Swagger documentation available at http://localhost:${port}/api-docs`
+  );
 });

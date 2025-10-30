@@ -12,42 +12,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 
-private val BalasnColorScheme = lightColorScheme(
+private val DreamFoodColorScheme = lightColorScheme(
     primary = greenDark,             // główny kolor akcji (przyciski)
     onPrimary = Color.White,         // tło napisów w przyciskach
     secondary = greenDark,                // kolor akcentowy
     onSecondary = Color.White,       // tekst/ikony na secondary
     background = backgroundDark,    // główne tło aplikacji
-    onBackground = Color.Black,      // tekst na tle background
+    onBackground = Color.White,      // tekst na tle background
     surface = backgroundDark,           // tło kart, paneli, TextFieldów
     onSurface = Color.Black,         // tekst na surface
     error = orange,                  // kolor błędów
     onError = Color.White            // tekst na błędach
 )
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
 
 
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
-)
 
 @Composable
 fun DreamFoodAppTheme(
@@ -62,8 +42,8 @@ fun DreamFoodAppTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
-        else -> BalasnColorScheme
+        darkTheme -> DreamFoodColorScheme
+        else -> DreamFoodColorScheme
     }
 
     MaterialTheme(
