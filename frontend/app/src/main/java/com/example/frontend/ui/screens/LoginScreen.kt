@@ -91,8 +91,6 @@ fun LoginScreen(navController: NavHostController,
             FullSizeButton(
                 text = "Zaloguj się",
                 onClick = {
-                    /* TODO: Logika logowania */
-
                     if (email.isEmpty() || password.isEmpty()) {
                         val context = null
                         Toast.makeText(context, "Wypełnij wszystkie pola", Toast.LENGTH_LONG).show()

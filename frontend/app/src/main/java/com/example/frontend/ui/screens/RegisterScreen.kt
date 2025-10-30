@@ -102,11 +102,7 @@ fun RegisterScreen(navController: NavHostController,
             Spacer(modifier = Modifier.height(16.dp))
             FullSizeButton(
                 text = "Zarejestruj się",
-                onClick = {
-
-
-                    viewModel.registerUser(name, surname, email, password, 0)
-
+                onClick = {viewModel.registerUser(name, surname, email, password, 0)
                     if( isError || email.isEmpty() ) {
                         Toast.makeText(context, "Email musi być w formie example@example.pl", Toast.LENGTH_LONG).show()
                     }
