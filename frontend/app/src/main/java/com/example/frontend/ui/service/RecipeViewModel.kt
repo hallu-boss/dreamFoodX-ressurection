@@ -15,6 +15,8 @@ class RecipeViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
     var errorMessage by mutableStateOf<String?>(null)
 
+    var recipeUserRating by mutableStateOf<Int?>(0)
+
     fun loadRecipes() {
         viewModelScope.launch {
             isLoading = true
@@ -56,4 +58,20 @@ class RecipeViewModel : ViewModel() {
             }
         }
     }
+
+    fun getRecipeUserRating(recipeId: Int, token: String) {
+        viewModelScope.launch {
+            isLoading = true
+            error = null
+            try {
+//                TODO: da oceny val response = ApiClient.getApi(token).getRecipe(recipeId)
+                recipeUserRating = 3
+            } catch (e: Exception) {
+                error = e.localizedMessage
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
 }

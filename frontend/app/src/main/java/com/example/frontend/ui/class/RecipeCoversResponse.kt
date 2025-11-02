@@ -54,7 +54,7 @@ data class RecipeStep(
     val description: String,
     val ingredient: Ingredient?,
     val amount: Double?,
-    val time: Int?,
+    val time: String?,
     val temperature: Int?,
     val mixSpeed: Int?
 )

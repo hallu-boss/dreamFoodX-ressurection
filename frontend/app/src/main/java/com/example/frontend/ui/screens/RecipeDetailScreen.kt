@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -23,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +42,7 @@ import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.service.RecipeViewModel
 import  com.example.frontend.ui.components.ErrorPlopup
 import com.example.frontend.ui.components.recipeDetails.IngredientList
+import com.example.frontend.ui.components.recipeDetails.StarRating
 import com.example.frontend.ui.components.recipeDetails.basicInformation
 import com.example.frontend.ui.components.recipeDetails.stepDetail
 
@@ -55,12 +58,18 @@ fun RecipeDetailScreen(recipeId: String,
     val isLoading = viewModel.isLoading
     val error = viewModel.error
     val token = loginViewModel.token
+    var recipeUserReating by remember { mutableStateOf(0) }
 
     LaunchedEffect(recipeId, token) {
         token?.let {
             viewModel.getRecipeById(recipeId.toInt(), it)
+            viewModel.getRecipeUserRating(recipeId.toInt(), it)
+            recipeUserReating = viewModel.recipeUserRating ?: 1
         }
     }
+
+
+
 
     MainLayout(
         navController = navController,
@@ -119,7 +128,7 @@ fun RecipeDetailScreen(recipeId: String,
                                 modifier = Modifier.align(Alignment.Center)
                             )
 
-                            else -> RecipeDetailContent(recipeDetail, onDismiss = {navController.popBackStack()})
+                            else -> RecipeDetailContent(recipeDetail, onDismiss = {navController.popBackStack()}, recipeUserReating = recipeUserReating ?: 0)
                         }
                     }
                 }
@@ -128,7 +137,9 @@ fun RecipeDetailScreen(recipeId: String,
     }
 }
 @Composable
-fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit ) {
+fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit , recipeUserReating: Int = 0) {
+    var userRating by remember { mutableStateOf(recipeUserReating) }
+
     if (recipeDetail != null) {
         LazyColumn(modifier = Modifier.padding(16.dp)) {
             item {
@@ -146,6 +157,16 @@ fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit ) {
             }
             item {
                 basicInformation(recipeDetail)
+                Spacer(modifier = Modifier.height(10.dp))
+
+            }
+            item {
+                StarRating(
+                    yourStars = userRating,
+                    onRatingChanged = { newRating ->
+                    userRating = newRating
+//                     TODO: wysyłanie / modyfikacja oceny
+                } )
                 Spacer(modifier = Modifier.height(10.dp))
             }
 
@@ -165,8 +186,8 @@ fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit ) {
 
 
             if( recipeDetail.permission ) {
-                    items (recipeDetail.steps ?: emptyList() ) { step ->
-                        stepDetail(step = step)
+                itemsIndexed (recipeDetail.steps ?: emptyList() ) { index, step ->
+                        stepDetail(step = step, index = index + 1)
                         Spacer(modifier = Modifier.height(15.dp))
                     }
             }
