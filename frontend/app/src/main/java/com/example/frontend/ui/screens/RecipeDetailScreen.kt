@@ -58,7 +58,9 @@ fun RecipeDetailScreen(recipeId: String,
     val isLoading = viewModel.isLoading
     val error = viewModel.error
     val token = loginViewModel.token
-    var recipeUserReating by remember { mutableStateOf(0) }
+    var recipeUserReating by remember { mutableStateOf(viewModel.recipeUserRating ?: 1) }
+    val isLoadingRating = viewModel.isLoadingRating
+
 
     LaunchedEffect(recipeId, token) {
         token?.let {
@@ -128,7 +130,13 @@ fun RecipeDetailScreen(recipeId: String,
                                 modifier = Modifier.align(Alignment.Center)
                             )
 
-                            else -> RecipeDetailContent(recipeDetail, onDismiss = {navController.popBackStack()}, recipeUserReating = recipeUserReating ?: 0)
+                            else -> when {
+                                isLoadingRating -> CircularProgressIndicator()
+
+                                error != null -> Text(text = "Błąd: $error", color = Color.Red)
+
+                                else -> RecipeDetailContent(recipeDetail, onDismiss = {navController.popBackStack()}, recipeUserReating = recipeUserReating)
+                            }
                         }
                     }
                 }
