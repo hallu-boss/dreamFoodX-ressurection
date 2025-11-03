@@ -118,16 +118,22 @@ fun RecipeCoverItem(recipe: RecipeCover,
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(recipe.cookingTime)
                 Spacer(modifier = Modifier.width(25.dp))
-                if( recipe.price > 0) {
-                    Button(onClick = onClick) {
+
+                if( recipe.price > 0 && !(recipe.isOwned?: false)) {
+                    Button(onClick = {
+// TODO:    Dodanie koszyka
+                    }) {
+
                         Icon(
                             imageVector = Add_shopping_cart,
                             contentDescription = "Dodaj do koszyka"
                         )
                     }
                 }
-                else {
-                    Button(onClick = onClick) {
+                else if( recipe.price == 0.0 && !(recipe.isPurchased?: false)){
+                    Button(onClick = {
+// TODO:    Dodaj do kolekcji
+                    }) {
                         Icon(
                             imageVector = Add,
                             contentDescription = "Dodaj do kolekcji przepisów"
