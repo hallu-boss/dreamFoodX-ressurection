@@ -1,4 +1,4 @@
-package com.example.frontend.ui.components
+package com.example.frontend.ui.components.RecipeCard
 
 import RecipeCover
 import android.annotation.SuppressLint
@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.frontend.R
+import com.example.frontend.ui.components.icons.Add
+import com.example.frontend.ui.components.icons.Add_shopping_cart
 
 
 private fun getStarColor(ocena: Double): Color {
@@ -114,6 +117,23 @@ fun RecipeCoverItem(recipe: RecipeCover,
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(recipe.cookingTime)
+                Spacer(modifier = Modifier.width(25.dp))
+                if( recipe.price > 0) {
+                    Button(onClick = onClick) {
+                        Icon(
+                            imageVector = Add_shopping_cart,
+                            contentDescription = "Dodaj do koszyka"
+                        )
+                    }
+                }
+                else {
+                    Button(onClick = onClick) {
+                        Icon(
+                            imageVector = Add,
+                            contentDescription = "Dodaj do kolekcji przepisów"
+                        )
+                    }
+                }
             }
         }
     }
