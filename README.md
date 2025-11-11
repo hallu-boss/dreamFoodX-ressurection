@@ -22,7 +22,7 @@ npx prisma migrate dev
 
 seed database:
 ```
-node run seed
+npx ts-node prisma/seed.ts
 ```
 
 ### Run server

@@ -27,12 +27,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.frontend.ui.components.InputField
 
 @Composable
 fun StarRating( totalStars: Int = 5,
                 modifier: Modifier = Modifier,
                 yourStars: Int = 0,
-                onRatingChanged: ((Int) -> Unit)? = null ) {
+                yourOpinion: String,
+                onRatingChanged: ((Int, String) -> Unit)? = null ) {
     Column (
         modifier = Modifier
             .fillMaxWidth()
@@ -49,8 +51,17 @@ fun StarRating( totalStars: Int = 5,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
         )
+        var opinion by remember { mutableStateOf(yourOpinion) }
+
+        InputField(
+            value = opinion, isError = false,
+            onValueChange = {opinion = it},
+            label = "Twoja opinia",
+            modifier = Modifier
+        )
         Row(modifier = modifier) {
-            var rating by remember { mutableStateOf(yourStars) }
+            var rating by remember {
+                mutableStateOf(yourStars) }
 
             for (i in 1..totalStars) {
                 val icon = if (i <= rating) Icons.Filled.Star else Icons.Outlined.Star
@@ -64,7 +75,7 @@ fun StarRating( totalStars: Int = 5,
                         .padding(4.dp)
                         .clickable {
                             rating = i
-                            onRatingChanged?.invoke(i)
+                            onRatingChanged?.invoke(i, opinion)
                         }
                 )
             }
