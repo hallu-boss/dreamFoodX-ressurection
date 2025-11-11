@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.MainLayout
-import com.example.frontend.ui.components.RecipeCoverItem
+import com.example.frontend.ui.components.RecipeCard.RecipeCoverItem
 import com.example.frontend.ui.components.RecipeFilter
 import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.service.RecipeViewModel
@@ -26,7 +26,7 @@ import com.example.frontend.ui.service.RecipeViewModel
 @Composable
 fun HomeScreen(navController: NavHostController,
                loginViewModel: LoginViewModel = viewModel(),
-               recipeView: RecipeViewModel = viewModel (),
+               recipeView: RecipeViewModel,
 ) {
     var selectedItem by remember { mutableStateOf("Strona główna") }
     val user = loginViewModel.user
@@ -53,7 +53,7 @@ fun HomeScreen(navController: NavHostController,
             ) {
                 Text("Dostępne przeisy ", fontSize = 40.sp)
                 Spacer(modifier = Modifier.height(25.dp))
-                Text("Witaj, ${user?.name} ${user?.surname}", fontSize = 24.sp)
+                Text("Witaj, ${user?.name} ${user?.surname} - ${user?.id}", fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(20.dp))
 
                 RecipeFilter( recipes, onFiltered = { filteredRecipes = it })

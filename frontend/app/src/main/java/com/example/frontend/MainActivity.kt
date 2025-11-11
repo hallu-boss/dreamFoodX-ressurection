@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val recipeView : RecipeViewModel = viewModel ()
             val loginViewModel: LoginViewModel = viewModel()
-//            loginViewModel.login("testUser@testUser.testUser", "testUser")
+            loginViewModel.login("testUser@testUser.testUser", "testUser")
 
             DreamFoodAppTheme {
                 val navController: NavHostController = rememberNavController()
@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Screen.Login.route
+                    startDestination = Screen.Home.route
                 ) {
                     composable(Screen.Register.route) { RegisterScreen(navController) }
                     composable(Screen.Login.route) { LoginScreen(navController, viewModel = loginViewModel) }

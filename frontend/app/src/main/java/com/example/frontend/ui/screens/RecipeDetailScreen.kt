@@ -1,6 +1,7 @@
 package com.example.frontend.ui.screens
 
 import RecipeResponse
+import Review
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,11 +36,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.MainLayout
-import com.example.frontend.ui.components.NetworkImage
 import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.service.RecipeViewModel
 import  com.example.frontend.ui.components.ErrorPlopup
+import com.example.frontend.ui.components.RecipeCard.NetworkImage
 import com.example.frontend.ui.components.recipeDetails.IngredientList
+import com.example.frontend.ui.components.recipeDetails.StarRating
 import com.example.frontend.ui.components.recipeDetails.basicInformation
 import com.example.frontend.ui.components.recipeDetails.stepDetail
 
@@ -47,7 +49,7 @@ import com.example.frontend.ui.components.recipeDetails.stepDetail
 @Composable
 fun RecipeDetailScreen(recipeId: String,
                        viewModel: RecipeViewModel, navController: NavHostController,
-                       loginViewModel: LoginViewModel,
+                       loginViewModel: LoginViewModel
                        ) {
     var selectedItem by remember { mutableStateOf("Strona główna") }
 
@@ -55,12 +57,24 @@ fun RecipeDetailScreen(recipeId: String,
     val isLoading = viewModel.isLoading
     val error = viewModel.error
     val token = loginViewModel.token
+    var recipeUserReating by remember { mutableStateOf(viewModel.recipeUserRating ?: 1) }
+    val isLoadingRating = viewModel.isLoadingRating
 
-    LaunchedEffect(recipeId, token) {
+
+    LaunchedEffect(recipeId, loginViewModel.user?.id, token, viewModel.userRatingOpinion, viewModel.recipeUserRating) {
         token?.let {
             viewModel.getRecipeById(recipeId.toInt(), it)
+            viewModel.getRecipeUserRating(
+                userId = loginViewModel.user?.id,
+                recipeId = recipeId.toInt(),
+                token = it
+            )
+            recipeUserReating = viewModel.recipeUserRating ?: 1
         }
     }
+
+
+
 
     MainLayout(
         navController = navController,
@@ -89,7 +103,8 @@ fun RecipeDetailScreen(recipeId: String,
                     Row(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        IconButton(onClick = { navController.popBackStack() }) {
+                        IconButton(onClick = { navController.popBackStack()
+                        }) {
                             Icon(
                                 imageVector = Icons.Default.ArrowBack,
                                 contentDescription = "Cofnij",
@@ -119,7 +134,13 @@ fun RecipeDetailScreen(recipeId: String,
                                 modifier = Modifier.align(Alignment.Center)
                             )
 
-                            else -> RecipeDetailContent(recipeDetail, onDismiss = {navController.popBackStack()})
+                            else -> when {
+                                isLoadingRating -> CircularProgressIndicator()
+
+                                error != null -> Text(text = "Błąd: $error", color = Color.Red)
+
+                                else -> RecipeDetailContent(recipeDetail, onDismiss = {navController.popBackStack()}, recipeUserReating = recipeUserReating, loginViewModel, viewModel )
+                            }
                         }
                     }
                 }
@@ -128,7 +149,9 @@ fun RecipeDetailScreen(recipeId: String,
     }
 }
 @Composable
-fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit ) {
+fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit , recipeUserReating: Int = 0, loginViewModel: LoginViewModel, recipeViewModel: RecipeViewModel) {
+    var userRating by remember { mutableStateOf(recipeUserReating) }
+
     if (recipeDetail != null) {
         LazyColumn(modifier = Modifier.padding(16.dp)) {
             item {
@@ -146,6 +169,25 @@ fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit ) {
             }
             item {
                 basicInformation(recipeDetail)
+                Spacer(modifier = Modifier.height(10.dp))
+
+            }
+            item {
+                StarRating(
+                    yourStars = userRating,
+                    yourOpinion = recipeViewModel.userRatingOpinion ,
+                    onRatingChanged = { newRating, userOpinion ->
+                    userRating = newRating
+                    val newReview = Review(
+                        recipeId = recipeDetail.id,
+                        rating = newRating,
+                        opinion = userOpinion,
+                        userId = loginViewModel.user?.id ?: 0
+                    )
+                        recipeViewModel.createRecipeUserRating(newReview, token = loginViewModel.token
+                            ?: "")
+                        recipeViewModel.userRatingOpinion = userOpinion
+                } )
                 Spacer(modifier = Modifier.height(10.dp))
             }
 
@@ -165,8 +207,8 @@ fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit ) {
 
 
             if( recipeDetail.permission ) {
-                    items (recipeDetail.steps ?: emptyList() ) { step ->
-                        stepDetail(step = step)
+                itemsIndexed (recipeDetail.steps ?: emptyList() ) { index, step ->
+                        stepDetail(step = step, index = index + 1)
                         Spacer(modifier = Modifier.height(15.dp))
                     }
             }

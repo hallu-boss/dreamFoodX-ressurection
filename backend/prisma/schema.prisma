@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int          @id @default(autoincrement())
+  name             String
+  surname          String
+  email            String       @unique
+  password         String
+  cookingHours     Float
+  newsletter       Boolean      @default(false)
+  ingredients      Ingredient[]
+  recipes          Recipe[]     @relation("AuthorRecipes")
+  reviews          Review[]
+  cart             Cart?
+  orders           Order[]
+  purchasedRecipes Recipe[]     @relation("PurchasedRecipes")
+}
+
+model Recipe {
+  id          Int          @id @default(autoincrement())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  userId      Int
+  visible     Boolean      @default(true)
+  category    String
+  description String
+  image       String?
+  price       Decimal      @db.Decimal(10, 2)
+  title       String
+  author      User         @relation("AuthorRecipes", fields: [userId], references: [id])
+  steps       RecipeStep[]
+  reviews     Review[]
+  cartItems   CartItem[]   @relation("CartItems")
+  orderItems  OrderItem[]
+  purchasers  User[]       @relation("PurchasedRecipes")
+}
+
+model Review {
+  id       Int    @id @default(autoincrement())
+  recipeId Int
+  rating   Int
+  opinion  String
+  userId   Int
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  user     User   @relation(fields: [userId], references: [id])
+}
+
+model Ingredient {
+  id       Int          @id @default(autoincrement())
+  title    String
+  unit     String
+  category String
+  ownerId  Int?
+  owner    User?        @relation(fields: [ownerId], references: [id])
+  steps    RecipeStep[]
+}
+
+model RecipeStep {
+  id           Int         @id @default(autoincrement())
+  recipeId     Int
+  ingredientId Int?
+  stepType     StepType
+  amount       Decimal?    @db.Decimal(10, 2)
+  description  String?
+  mixSpeed     Int?
+  temperature  Int?
+  time         String?
+  title        String
+  ingredient   Ingredient? @relation(fields: [ingredientId], references: [id])
+  recipe       Recipe      @relation(fields: [recipeId], references: [id])
+}
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  items     CartItem[]
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("carts")
+}
+
+model CartItem {
+  id       Int      @id @default(autoincrement())
+  cartId   Int
+  recipeId Int
+  addedAt  DateTime @default(now())
+  cart     Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  recipe   Recipe   @relation("CartItems", fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, recipeId])
+  @@map("cart_items")
+}
+
+model Order {
+  id              Int           @id @default(autoincrement())
+  userId          Int
+  status          OrderStatus   @default(PENDING)
+  total           Decimal       @db.Decimal(10, 2)
+  paymentMethod   PaymentMethod
+  paymentIntentId String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  items           OrderItem[]
+  user            User          @relation(fields: [userId], references: [id])
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id       Int     @id @default(autoincrement())
+  orderId  Int
+  recipeId Int
+  price    Decimal @db.Decimal(10, 2)
+  title    String
+  order    Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  recipe   Recipe  @relation(fields: [recipeId], references: [id])
+
+  @@unique([orderId, recipeId])
+  @@map("order_items")
+}
+
+enum StepType {
+  ADD_INGREDIENT
+  COOKING
+  DESCRIPTION
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  STRIPE
+  MOCK
+  PAYPAL
+}

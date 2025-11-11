@@ -6,6 +6,9 @@ import RecipeCoversResponse
 import RecipeResponse
 import RegisterRequest
 import RegisterResponse
+import Review
+import ReviewRequest
+import ReviewResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.Response
@@ -13,6 +16,9 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+data class MessageResponse(
+    val message: String
+)
 
 interface ApiService {
     @POST("auth/register")
@@ -35,4 +41,15 @@ interface ApiService {
     suspend fun getRecipe(
         @Path("id") recipeId: Int
     ): Response<RecipeResponse>
+
+    @POST("recipe/create/recipeReviews")
+    suspend fun createRecipeReviews(@Body review: Review
+    ): Response<MessageResponse>
+
+    @GET("recipe/reviews")
+    suspend fun getRecipeReview(
+        @Query("recipeId") recipeId: Int,
+        @Query("userId") userId: Int
+    ): Response<ReviewResponse>
+
 }

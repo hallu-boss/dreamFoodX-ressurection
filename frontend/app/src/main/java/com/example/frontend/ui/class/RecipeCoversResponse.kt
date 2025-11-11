@@ -54,7 +54,7 @@ data class RecipeStep(
     val description: String,
     val ingredient: Ingredient?,
     val amount: Double?,
-    val time: Int?,
+    val time: String?,
     val temperature: Int?,
     val mixSpeed: Int?
 )
@@ -64,8 +64,22 @@ data class Ingredient(
     val unit: String
 )
 
-data class Review(
-    val id: Int,
-    val comment: String?,
-    val rating: Int?
+data class Review (
+    val recipeId: Int,
+    val rating:   Int,
+    val opinion:  String,
+    val userId:   Int,
 )
+
+data class ReviewRequest (
+    val recipeId: Int,
+    val userId:   Int,
+)
+
+data class ReviewResponse (
+    val recipeId: Int,
+    val userId:   Int,
+    val rating:   Int,
+    val opinion:  String,
+)
+
