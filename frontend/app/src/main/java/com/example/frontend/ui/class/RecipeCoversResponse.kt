@@ -16,8 +16,8 @@ data class RecipeCover(
     val reviewsCount: Int,
     val cookingTime: String,
     val ingredientsCount: Int,
-    val isPurchased: Boolean? = null,
-    val isOwned: Boolean? = null
+    var isPurchased: Boolean, // czy dodano do ulubionych
+    val isOwned: Boolean
 )
 
 data class Author(

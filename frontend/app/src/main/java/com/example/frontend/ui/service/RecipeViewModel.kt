@@ -26,11 +26,11 @@ class RecipeViewModel : ViewModel() {
     var recipeUserRating by mutableStateOf<Int?>(0)
         private set
 
-    fun loadRecipes() {
+    fun loadRecipes(token: String) {
         viewModelScope.launch {
             isLoading = true
             try {
-                val response = ApiClient.api.getRecipeCovers(page = 1)
+                val response = ApiClient.getApi(token).getRecipeCovers(page = 1)
                 if (response.isSuccessful) {
                     recipes = response.body()?.recipes ?: emptyList()
                 } else {

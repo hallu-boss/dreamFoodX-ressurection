@@ -1,5 +1,6 @@
 package com.example.frontend.ui.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,7 +36,7 @@ fun HomeScreen(navController: NavHostController,
 ) {
     var selectedItem by remember { mutableStateOf("Strona główna") }
     val user = loginViewModel.user
-    recipeView.loadRecipes()
+    recipeView.loadRecipes(loginViewModel.token ?: "")
     cartViewModel.setToken(loginViewModel.token)
     val context = LocalContext.current
     val recipes = recipeView.recipes
@@ -81,6 +82,7 @@ fun HomeScreen(navController: NavHostController,
                             modifier = Modifier.fillMaxSize()
                         ) {
                             items(filteredRecipes) { recipe ->
+                                Log.d("isPurchased", "${recipe.id} ${recipe.isPurchased}")
                                 RecipeCoverItem(
                                     recipe = recipe,
                                     onAddToCart = { recipeId -> cartViewModel.addToCart(recipeId)
@@ -89,7 +91,8 @@ fun HomeScreen(navController: NavHostController,
                                         if( cartViewModel.errorMessage != null)
                                             Toast.makeText(context, cartViewModel.errorMessage, Toast.LENGTH_LONG ).show()
                                                   },
-                                    onAddToColection = {  idRecipe -> recipeView.addOrRemoveFreeRecipeToUser(idRecipe, loginViewModel.token ?: "")
+                                    onAddToColection = {
+                                        idRecipe -> recipeView.addOrRemoveFreeRecipeToUser(idRecipe, loginViewModel.token ?: "")
                                         if( recipeView.responseMmessage != null)
                                             Toast.makeText(context,  recipeView.responseMmessage, Toast.LENGTH_LONG ).show()
                                         if( recipeView.errorMessage != null)
