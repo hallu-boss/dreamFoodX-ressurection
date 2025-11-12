@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
                     composable(Screen.Login.route) { LoginScreen(navController, viewModel = loginViewModel) }
                     composable(Screen.Home.route) { HomeScreen(navController, loginViewModel = loginViewModel,recipeView = recipeView ) }
                     composable(Screen.Profile.route) { ProfileScreen(navController) }
-                    composable(Screen.Shopping.route ){ ShoppingBasketScreen(navController) }
+                    composable(Screen.Shopping.route ){ ShoppingBasketScreen(navController, loginViewModel) }
                     composable(Screen.Recipes.route) { RecipeScreen(navController) }
                     composable(Screen.Test.route) { TestScreen(navController, loginViewModel = loginViewModel) }
                     composable("recipeDetail/{recipeId}") { backStackEntry ->

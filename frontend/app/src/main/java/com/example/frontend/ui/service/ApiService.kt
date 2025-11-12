@@ -7,7 +7,6 @@ import RecipeResponse
 import RegisterRequest
 import RegisterResponse
 import Review
-import ReviewRequest
 import ReviewResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -51,5 +50,10 @@ interface ApiService {
         @Query("recipeId") recipeId: Int,
         @Query("userId") userId: Int
     ): Response<ReviewResponse>
+
+
+
+    @GET("cart")
+    suspend fun getCart() : Response<Cart>
 
 }
