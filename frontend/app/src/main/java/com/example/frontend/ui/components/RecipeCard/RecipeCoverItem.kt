@@ -125,7 +125,6 @@ fun RecipeCoverItem(recipe: RecipeCover,
                     Button(onClick = {
                         onAddToCart(recipe.id)
                     }) {
-
                         Icon(
                             imageVector = Add_shopping_cart,
                             contentDescription = "Dodaj do koszyka"

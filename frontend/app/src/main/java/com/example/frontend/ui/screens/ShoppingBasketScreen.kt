@@ -12,9 +12,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.MainLayout
+import com.example.frontend.ui.components.Cart.CartItem
 import com.example.frontend.ui.service.CartViewModel
 import com.example.frontend.ui.service.LoginViewModel
-import kotlin.math.log
 
 @Composable
 fun ShoppingBasketScreen(navController: NavHostController,
@@ -48,7 +48,10 @@ fun ShoppingBasketScreen(navController: NavHostController,
 
                 Text("Lista produktów w twoim koszyku:")
                 cartViewModel.cart!!.items.forEach { produkt ->
-                    Text("\t${produkt.id}: ${produkt.title } - ${produkt.price}")
+                    CartItem(
+                        item = produkt,
+                        onClick = {}
+                    )
                 }
             }
         }
