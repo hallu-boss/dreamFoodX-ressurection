@@ -6,6 +6,7 @@ import {
   getRecipe,
   getRecipeCovers,
   getRecipeReview,
+  addOrRemoveFreeRecipeToUser,
 } from "../controllers/recipe.controller";
 import { authenticate } from "../middleware/authenticate";
 import { validateRecipe } from "../middleware/validators";
@@ -22,6 +23,8 @@ const uploadMiddleware = upload.single("image");
 
 router.post("/create/recipeReviews", createRecipeReviews);
 router.get("/reviews", getRecipeReview);
+
+router.put("/user/purchasedRecipes", authenticate, addOrRemoveFreeRecipeToUser)
 
 
 /**

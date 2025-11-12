@@ -103,7 +103,7 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
   try {
     // req.user is set in the authenticate middleware
     const userId = (req as any).user.id;
-
+    console.log("getProfile  ", + userId)
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
