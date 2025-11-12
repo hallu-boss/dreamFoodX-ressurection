@@ -15,7 +15,7 @@ export const getCart = async (
 ) => {
   try {
     const userId = (req as any).user.id;
-
+    console.log("getCart  " + userId)
     // Znajdź lub utwórz koszyk dla użytkownika
     let cart = await prisma.cart.findUnique({
       where: { userId },

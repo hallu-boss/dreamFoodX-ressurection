@@ -73,7 +73,7 @@ fun TestScreen(navController: NavHostController,
                             modifier = Modifier.fillMaxSize()
                         ) {
                             items(recipeView.recipes) { recipe ->
-                                RecipeCoverItem(recipe = recipe, onClick = {})
+
                             }
                         }
                     }

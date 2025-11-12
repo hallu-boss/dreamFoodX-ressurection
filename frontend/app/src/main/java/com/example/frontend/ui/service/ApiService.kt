@@ -56,4 +56,11 @@ interface ApiService {
     @GET("cart")
     suspend fun getCart() : Response<Cart>
 
+    data class AddToCartRequest(
+        val recipeId: Int
+    )
+
+    @POST("cart/add")
+    suspend fun addToCart(@Body recipeId: AddToCartRequest) : Response<MessageResponse>
+
 }

@@ -17,9 +17,12 @@ import com.example.frontend.ui.service.LoginViewModel
 import kotlin.math.log
 
 @Composable
-fun ShoppingBasketScreen(navController: NavHostController, loginViewModel: LoginViewModel, ) {
+fun ShoppingBasketScreen(navController: NavHostController,
+                         loginViewModel: LoginViewModel,
+                          cartViewModel: CartViewModel = viewModel()
+) {
     var selectedItem by remember { mutableStateOf("koszyk") }
-    val cartViewModel: CartViewModel = viewModel()
+
     cartViewModel.setToken(loginViewModel.token)
     cartViewModel.getUserCart()
 
