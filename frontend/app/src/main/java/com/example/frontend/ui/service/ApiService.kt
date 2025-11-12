@@ -13,6 +13,7 @@ import retrofit2.http.POST
 import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -27,6 +28,8 @@ interface ApiService {
     @POST("auth/login")
     suspend fun login(@Body body: LoginRequest): Response<LoginResponse>
 
+    @GET("auth/profile")
+    suspend fun getProfile() : Response<UserProfile>
 
     @GET("recipe/covers")
     suspend fun getRecipeCovers(
@@ -52,7 +55,8 @@ interface ApiService {
         @Query("userId") userId: Int
     ): Response<ReviewResponse>
 
-
+    @PUT("recipe/user/purchasedRecipes")
+    suspend fun addOrRemoveFreeRecipeToUser(@Query("recipeId") recipeId: Int) : Response<MessageResponse>
 
     @GET("cart")
     suspend fun getCart() : Response<Cart>
@@ -69,5 +73,7 @@ interface ApiService {
     suspend fun deleteFromCart(
         @Path("recipeId") recipeId: Int
     ): Response<MessageResponse>
+
+
 
 }
