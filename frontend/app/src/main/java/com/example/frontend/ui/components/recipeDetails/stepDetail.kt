@@ -54,7 +54,7 @@ fun stepDetail(step: RecipeStep, index: Int) {
                 if (step.stepType == "COOKING") {
                     Row {
                         Text("Czas: ", fontWeight = FontWeight.Bold)
-                        Text("${step.time ?: "Czas się nie liczy" } min.")
+                        Text("${step.time ?: "Czas się nie liczy" } ")
                     }
 
                     Row {
@@ -68,7 +68,6 @@ fun stepDetail(step: RecipeStep, index: Int) {
                     }
                 }
                 else if ( step.stepType == "DESCRIPTION"){
-                    Text(step.title, fontSize = 25.sp)
                     Spacer(modifier = Modifier.height(15.dp))
                     Row {
                         Text("Opis: ", fontWeight = FontWeight.Bold)
