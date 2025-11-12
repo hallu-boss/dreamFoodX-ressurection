@@ -55,7 +55,9 @@ fun getPrice(cena : Double) : String {
 
 @Composable
 fun RecipeCoverItem(recipe: RecipeCover,
-                    onClick: () -> Unit
+                    onClick: () -> Unit,
+                    onAddToCart: (Int) -> Unit,
+                    onAddToColection: (Int) -> Unit
                     ) {
     Column(
         modifier = Modifier
@@ -121,9 +123,8 @@ fun RecipeCoverItem(recipe: RecipeCover,
 
                 if( recipe.price > 0 && !(recipe.isOwned?: false)) {
                     Button(onClick = {
-// TODO:    Dodanie koszyka
+                        onAddToCart(recipe.id)
                     }) {
-
                         Icon(
                             imageVector = Add_shopping_cart,
                             contentDescription = "Dodaj do koszyka"
@@ -132,7 +133,7 @@ fun RecipeCoverItem(recipe: RecipeCover,
                 }
                 else if( recipe.price == 0.0 && !(recipe.isPurchased?: false)){
                     Button(onClick = {
-// TODO:    Dodaj do kolekcji
+                        onAddToColection(recipe.id)
                     }) {
                         Icon(
                             imageVector = Add,

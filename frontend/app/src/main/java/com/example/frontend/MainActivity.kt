@@ -17,6 +17,7 @@ import com.example.frontend.ui.screens.RecipeScreen
 import com.example.frontend.ui.screens.RegisterScreen
 import com.example.frontend.ui.screens.ShoppingBasketScreen
 import com.example.frontend.ui.screens.TestScreen
+import com.example.frontend.ui.service.CartViewModel
 import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.service.RecipeViewModel
 import com.example.frontend.ui.theme.DreamFoodAppTheme
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
 
             DreamFoodAppTheme {
                 val navController: NavHostController = rememberNavController()
-
+                val cartViewModel: CartViewModel = viewModel()
 
                 NavHost(
                     navController = navController,
@@ -42,9 +43,9 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable(Screen.Register.route) { RegisterScreen(navController) }
                     composable(Screen.Login.route) { LoginScreen(navController, viewModel = loginViewModel) }
-                    composable(Screen.Home.route) { HomeScreen(navController, loginViewModel = loginViewModel,recipeView = recipeView ) }
+                    composable(Screen.Home.route) { HomeScreen(navController, loginViewModel = loginViewModel, cartViewModel, recipeView = recipeView ) }
                     composable(Screen.Profile.route) { ProfileScreen(navController) }
-                    composable(Screen.Shopping.route ){ ShoppingBasketScreen(navController) }
+                    composable(Screen.Shopping.route ){ ShoppingBasketScreen(navController, loginViewModel, cartViewModel) }
                     composable(Screen.Recipes.route) { RecipeScreen(navController) }
                     composable(Screen.Test.route) { TestScreen(navController, loginViewModel = loginViewModel) }
                     composable("recipeDetail/{recipeId}") { backStackEntry ->

@@ -15,7 +15,7 @@ export const getCart = async (
 ) => {
   try {
     const userId = (req as any).user.id;
-
+    
     // Znajdź lub utwórz koszyk dla użytkownika
     let cart = await prisma.cart.findUnique({
       where: { userId },
@@ -242,7 +242,7 @@ export const removeFromCart = async (
   try {
     const userId = (req as any).user.id;
     const recipeId = parseInt(req.params.recipeId);
-
+    console.log("removeFromCart  ", + recipeId )
     // Walidacja ID
     if (isNaN(recipeId)) {
       return res.status(400).json({ error: "Nieprawidłowe ID przepisu" });
@@ -252,25 +252,25 @@ export const removeFromCart = async (
     const cart = await prisma.cart.findUnique({
       where: { userId },
     });
-
+    console.log("removeFromCart cart  ", + recipeId )
     if (!cart) {
       return res.status(404).json({ error: "Koszyk nie został znaleziony" });
     }
 
-    // Znajdź i usuń element z koszyka
+    
     const deletedItem = await prisma.cartItem.deleteMany({
       where: {
         cartId: cart.id,
         recipeId: recipeId,
       },
     });
-
+    console.log("removeFromCart cadeletedItemrt  ", + recipeId )
     if (deletedItem.count === 0) {
       return res
         .status(404)
         .json({ error: "Przepis nie został znaleziony w koszyku" });
     }
-
+  
     // Zaktualizuj timestamp koszyka
     await prisma.cart.update({
       where: { id: cart.id },

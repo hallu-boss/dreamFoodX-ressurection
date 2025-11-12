@@ -1,5 +1,6 @@
 package com.example.frontend.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -20,18 +23,21 @@ import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.MainLayout
 import com.example.frontend.ui.components.RecipeCard.RecipeCoverItem
 import com.example.frontend.ui.components.RecipeFilter
+import com.example.frontend.ui.service.CartViewModel
 import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.service.RecipeViewModel
 
 @Composable
 fun HomeScreen(navController: NavHostController,
                loginViewModel: LoginViewModel = viewModel(),
+               cartViewModel: CartViewModel = viewModel(),
                recipeView: RecipeViewModel,
 ) {
     var selectedItem by remember { mutableStateOf("Strona główna") }
     val user = loginViewModel.user
     recipeView.loadRecipes()
-
+    cartViewModel.setToken(loginViewModel.token)
+    val context = LocalContext.current
     val recipes = recipeView.recipes
     var filteredRecipes by remember { mutableStateOf(recipes) }
 
@@ -66,7 +72,7 @@ fun HomeScreen(navController: NavHostController,
                     recipeView.errorMessage != null -> {
                         Text(
                             text = "Błąd: ${recipeView.errorMessage}",
-                            color = androidx.compose.ui.graphics.Color.Red
+                            color = Color.Red
                         )
                     }
                     else -> {
@@ -75,9 +81,17 @@ fun HomeScreen(navController: NavHostController,
                             modifier = Modifier.fillMaxSize()
                         ) {
                             items(filteredRecipes) { recipe ->
-                                RecipeCoverItem(recipe = recipe) {
-                                    navController.navigate("recipeDetail/${recipe.id}")
-                                }
+                                RecipeCoverItem(
+                                    recipe = recipe,
+                                    onAddToCart = { recipeId -> cartViewModel.addToCart(recipeId)
+                                        if( cartViewModel.successMessage != null)
+                                            Toast.makeText(context, cartViewModel.successMessage, Toast.LENGTH_LONG ).show()
+                                        if( cartViewModel.errorMessage != null)
+                                            Toast.makeText(context, cartViewModel.errorMessage, Toast.LENGTH_LONG ).show()
+                                                  },
+                                    onAddToColection = {  },
+                                    onClick = { navController.navigate("recipeDetail/${recipe.id}") },
+                                )
                             }
                         }
                     }
