@@ -30,7 +30,7 @@ class CartViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     cart = response.body()
                 } else {
-                    errorMessage = "Błąd logowania: ${response.code()}"
+                    errorMessage = "Błąd koszyka: ${response.errorBody()?.string()}"
                 }
             } catch (e: Exception) {
                 errorMessage = e.localizedMessage
@@ -47,7 +47,24 @@ class CartViewModel : ViewModel() {
                     successMessage = response.body()?.message
                     errorMessage = null
                 } else {
-                    errorMessage = "Błąd logowania: ${response.code()}"
+                    errorMessage = "Błąd koszyka: ${response.errorBody()?.string()}"
+                    successMessage = null
+                }
+            } catch (e: Exception) {
+                errorMessage = e.localizedMessage
+            }
+        }
+    }
+
+    fun removeFromCart(idRecipe : Int) {
+        viewModelScope.launch {
+            try {
+                val response = ApiClient.getApi(token.value).deleteFromCart(idRecipe)
+                if (response.isSuccessful) {
+                    successMessage = response.body()?.message
+                    errorMessage = null
+                } else {
+                    errorMessage = "Błąd koszyka: ${response.errorBody()?.string()}"
                     successMessage = null
                 }
             } catch (e: Exception) {

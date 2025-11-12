@@ -24,12 +24,11 @@ import com.example.frontend.ui.service.CartItem
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontStyle
-import com.example.frontend.ui.theme.greenDark
 
 @Composable
 fun CartItem(
     item: CartItem,
-    onClick : () -> Unit
+    onClick : (Int) -> Unit
 ) {
     Row(Modifier
         .fillMaxWidth()
@@ -51,7 +50,7 @@ fun CartItem(
         }
 
         FloatingActionButton(
-            onClick = onClick,
+            onClick = { onClick(item.recipeId) },
             containerColor  = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .size(25.dp)
