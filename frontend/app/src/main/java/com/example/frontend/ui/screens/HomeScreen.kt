@@ -89,7 +89,12 @@ fun HomeScreen(navController: NavHostController,
                                         if( cartViewModel.errorMessage != null)
                                             Toast.makeText(context, cartViewModel.errorMessage, Toast.LENGTH_LONG ).show()
                                                   },
-                                    onAddToColection = {  },
+                                    onAddToColection = {  idRecipe -> recipeView.addOrRemoveFreeRecipeToUser(idRecipe, loginViewModel.token ?: "")
+                                        if( recipeView.responseMmessage != null)
+                                            Toast.makeText(context,  recipeView.responseMmessage, Toast.LENGTH_LONG ).show()
+                                        if( recipeView.errorMessage != null)
+                                            Toast.makeText(context, recipeView.errorMessage, Toast.LENGTH_LONG ).show()
+                                                       },
                                     onClick = { navController.navigate("recipeDetail/${recipe.id}") },
                                 )
                             }
