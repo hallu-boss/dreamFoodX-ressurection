@@ -13,6 +13,7 @@ class LoginViewModel : ViewModel() {
     var user by mutableStateOf<User?>(null)
     var token by mutableStateOf<String?>(null)
     var errorMessage by mutableStateOf<String?>(null)
+    var userProfile by mutableStateOf<UserProfile?>(null)
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
@@ -23,7 +24,22 @@ class LoginViewModel : ViewModel() {
                     token = body?.token
                     user = body?.user
                 } else {
-                    errorMessage = "Błąd logowania: ${response.code()}"
+                    errorMessage = "Błąd logowania: ${response.errorBody()?.toString()}"
+                }
+            } catch (e: Exception) {
+                errorMessage = e.localizedMessage
+            }
+        }
+    }
+
+    fun downloadUserProfile() {
+        viewModelScope.launch {
+            try {
+                val response = ApiClient.getApi(token ?: "").getProfile()
+                if (response.isSuccessful) {
+                    userProfile = response.body()
+                } else {
+                    errorMessage = "Błąd Pobrania danych użytkownika: ${response.errorBody()?.string()}"
                 }
             } catch (e: Exception) {
                 errorMessage = e.localizedMessage
