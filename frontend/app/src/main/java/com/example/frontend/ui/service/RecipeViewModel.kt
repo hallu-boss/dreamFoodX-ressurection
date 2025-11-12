@@ -48,22 +48,39 @@ class RecipeViewModel : ViewModel() {
         private set
 
 
-    var error by mutableStateOf<String?>(null)
+
     fun getRecipeById(recipeId: Int, token : String) {
         viewModelScope.launch {
             isLoading = true
-            error = null
+            errorMessage = null
             try {
                 val response = ApiClient.getApi(token).getRecipe(recipeId)
                 if (response.isSuccessful) {
                     recipeDetail = response.body()
                 } else {
-                    error = "Błąd: ${response.code()}"
+                    errorMessage = "Błąd: ${response.code()}"
                 }
             } catch (e: Exception) {
-                error = e.localizedMessage
+                errorMessage = e.localizedMessage
             } finally {
                 isLoading = false
+            }
+        }
+    }
+
+    fun addOrRemoveFreeRecipeToUser(recipeId: Int, token : String) {
+        viewModelScope.launch {
+            try {
+                val response = ApiClient.getApi(token).addOrRemoveFreeRecipeToUser(recipeId)
+                if (response.isSuccessful) {
+                    responseMmessage = response.body()?.message
+                    errorMessage = null
+                } else {
+                    errorMessage = "Błąd: ${response.errorBody()?.toString()}"
+                    responseMmessage = null
+                }
+            } catch (e: Exception) {
+                errorMessage = e.localizedMessage
             }
         }
     }
@@ -75,7 +92,7 @@ class RecipeViewModel : ViewModel() {
         isLoadingRating = true
         viewModelScope.launch {
             isLoading = true
-            error = null
+            errorMessage = null
             try {
                val response = ApiClient.getApi(token).getRecipeReview(recipeId = recipeId, userId = userId ?: 0)
                 if( response.isSuccessful ) {
@@ -85,8 +102,8 @@ class RecipeViewModel : ViewModel() {
                     userRatingOpinion = response.body()?.opinion ?: ""
                 }
             } catch (e: Exception) {
-                error = e.localizedMessage
-                Log.d("Review: ", "getRecipeUserRating  ${error}")
+                errorMessage = e.localizedMessage
+                Log.d("Review: ", "getRecipeUserRating  ${errorMessage}")
             } finally {
                 isLoadingRating = false
             }
@@ -97,7 +114,7 @@ class RecipeViewModel : ViewModel() {
         Log.d("Review: ", "createRecipeUserRating  ${reateing.userId} ${reateing.recipeId} ${reateing.rating}")
         viewModelScope.launch {
             isLoadingRating = true
-            error = null
+            errorMessage = null
             try {
                 val response = ApiClient.getApi(token).createRecipeReviews(reateing)
 
@@ -107,12 +124,11 @@ class RecipeViewModel : ViewModel() {
                     recipeUserRating = reateing.rating
                 }
             } catch (e: Exception) {
-                error = e.localizedMessage
-                Log.d("Review: ", "createRecipeUserRating  ${error}")
+                errorMessage = e.localizedMessage
+                Log.d("Review: ", "createRecipeUserRating  ${errorMessage}")
             } finally {
                 isLoadingRating = false
             }
         }
     }
-
 }

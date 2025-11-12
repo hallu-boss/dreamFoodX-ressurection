@@ -55,7 +55,7 @@ fun RecipeDetailScreen(recipeId: String,
 
     val recipeDetail = viewModel.recipeDetail
     val isLoading = viewModel.isLoading
-    val error = viewModel.error
+    val error = viewModel.errorMessage
     val token = loginViewModel.token
     var recipeUserReating by remember { mutableStateOf(viewModel.recipeUserRating ?: 1) }
     val isLoadingRating = viewModel.isLoadingRating
