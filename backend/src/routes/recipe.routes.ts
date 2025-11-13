@@ -5,9 +5,11 @@ import {
   getPlayRecipeSteps,
   getRecipe,
   getRecipeCovers,
-  getRecipeReview,
+  getRecipeUserReview,
   addOrRemoveFreeRecipeToUser,
-} from "../controllers/recipe.controller";
+  getRecipeReviews
+} 
+from "../controllers/recipe.controller";
 import { authenticate } from "../middleware/authenticate";
 import { validateRecipe } from "../middleware/validators";
 import multer from "multer";
@@ -21,10 +23,13 @@ const uploadMiddleware = upload.single("image");
 
 
 
-router.post("/create/recipeReviews", createRecipeReviews);
-router.get("/reviews", getRecipeReview);
+router.post("/create/recipeReviews", createRecipeReviews); // tworzy / zmienia opinię komentarz i ocenę użytkownika na dany przepis
+router.get("/reviews", getRecipeUserReview);      // pobiera jego ocende danego przepisu
+router.get("/reviews/all", getRecipeReviews);     // pobiera wszystkie oceny danego przepisu
 
-router.put("/user/purchasedRecipes", authenticate, addOrRemoveFreeRecipeToUser)
+
+
+router.put("/user/purchasedRecipes", authenticate, addOrRemoveFreeRecipeToUser)  // dodaje/odejmuje daromowy przepis do/z ulubionych
 
 
 /**

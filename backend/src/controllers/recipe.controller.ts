@@ -589,7 +589,7 @@ export const createRecipeReviews = async (
   }
 };
 
-export const getRecipeReview = async (
+export const getRecipeUserReview = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -632,6 +632,53 @@ export const getRecipeReview = async (
   }
 };
 
+
+
+export const getRecipeReviews = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const recipeId = Number(req.query.recipeId);
+
+    if (!recipeId) {
+      throw new ValidationError('Brakuje wymaganego pola: recipeId', 400);
+    }
+
+    const reviews = await prisma.review.findMany({
+      where: { recipeId },
+      select: {
+        rating: true,
+        opinion: true,
+        userId: true,
+      },
+    });
+
+    
+        const reviewsWithUserData = await Promise.all(
+      reviews.map(async (review) => {
+        const user = await prisma.user.findUnique({
+          where: { id: review.userId },
+          select: { name: true, surname: true },
+        });
+
+        return {
+          recipeId,
+          rating: review.rating,
+          opinion: review.opinion,
+          name: user?.name || 'Nieznany',
+          surname: user?.surname || '',
+        };
+      })
+    );
+
+    res.status(200).json(reviewsWithUserData);
+
+  } catch (error) {
+    next(error);
+  }
+};
 
 
 export const addOrRemoveFreeRecipeToUser = async (

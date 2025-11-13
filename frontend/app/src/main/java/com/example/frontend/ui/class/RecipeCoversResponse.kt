@@ -71,15 +71,16 @@ data class Review (
     val userId:   Int,
 )
 
+data class Comment (
+    val recipeId: Int,
+    val rating:   Int,
+    val opinion:  String,
+    val name: String,
+    val surname: String
+)
+
 data class ReviewRequest (
     val recipeId: Int,
     val userId:   Int,
-)
-
-data class ReviewResponse (
-    val recipeId: Int,
-    val userId:   Int,
-    val rating:   Int,
-    val opinion:  String,
 )
 

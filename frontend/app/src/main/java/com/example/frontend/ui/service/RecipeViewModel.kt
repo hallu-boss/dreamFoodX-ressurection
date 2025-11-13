@@ -1,11 +1,12 @@
 package com.example.frontend.ui.service
 
+import Comment
 import RecipeCover
 import RecipeResponse
 import Review
-import ReviewRequest
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -106,6 +107,26 @@ class RecipeViewModel : ViewModel() {
                 Log.d("Review: ", "getRecipeUserRating  ${errorMessage}")
             } finally {
                 isLoadingRating = false
+            }
+        }
+    }
+
+    var reviewList = mutableStateListOf<Comment>()
+    fun getRecipeReviewAll(recipeId: Int, token: String) {
+        isLoading = true
+        errorMessage = null
+        viewModelScope.launch {
+            try {
+                val response = ApiClient.getApi(token).getRecipeReviews(recipeId)
+                if( response.isSuccessful ) {
+                    reviewList.clear()
+                    response.body()?.let { reviewList.addAll(it) }
+                }
+            } catch (e: Exception) {
+                errorMessage = e.localizedMessage
+                Log.d("Review: ", "getRecipeUserRating  ${errorMessage}")
+            } finally {
+                isLoading = false
             }
         }
     }

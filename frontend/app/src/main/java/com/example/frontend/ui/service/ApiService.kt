@@ -1,5 +1,6 @@
 package com.example.frontend.ui.service
 
+import Comment
 import LoginRequest
 import LoginResponse
 import RecipeCoversResponse
@@ -7,7 +8,6 @@ import RecipeResponse
 import RegisterRequest
 import RegisterResponse
 import Review
-import ReviewResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.Response
@@ -53,7 +53,12 @@ interface ApiService {
     suspend fun getRecipeReview(
         @Query("recipeId") recipeId: Int,
         @Query("userId") userId: Int
-    ): Response<ReviewResponse>
+    ): Response<Review>
+
+    @GET("recipe/reviews/all")
+    suspend fun getRecipeReviews(
+        @Query("recipeId") recipeId: Int
+    ): Response<List<Comment>>
 
     @PUT("recipe/user/purchasedRecipes")
     suspend fun addOrRemoveFreeRecipeToUser(@Query("recipeId") recipeId: Int) : Response<MessageResponse>
