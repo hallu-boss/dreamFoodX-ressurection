@@ -54,6 +54,10 @@ import com.example.frontend.ui.components.recipeDetails.StarRating
 import com.example.frontend.ui.components.recipeDetails.basicInformation
 import com.example.frontend.ui.components.recipeDetails.stepDetail
 
+/**
+ * Komponent odpowiedzialny za szczegółowe dane przepisu.
+ * Jedynie można dodawać ocenę z komentarzem, nie ma możliwości edycji
+ */
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun RecipeDetailScreen(recipeId: String,
@@ -125,6 +129,10 @@ fun RecipeDetailScreen(recipeId: String,
     }
 }
 
+/**
+ * Zakłądka Przepis w szczegółach przepisu, znajdujemy tu zdjęcie, podstawowe informacje o przepisue
+ * Możliwość oceny przepisu i komentarz, skłądniki, kroki przepisu potrzebne do przyrządzenia
+ */
 @Composable
 fun RecipeTab( recipeId: String,
                viewModel: RecipeViewModel, navController: NavHostController,
@@ -192,6 +200,9 @@ fun RecipeTab( recipeId: String,
     }
 }
 
+/**
+ * Zakłakda komentarzy w szczegółach przepisu na jego temat
+ */
 @Composable
 fun ReviewTab(viewModel: RecipeViewModel) {
     Column(modifier = Modifier
@@ -218,9 +229,11 @@ fun ReviewTab(viewModel: RecipeViewModel) {
 
 }
 
+/**
+ * Komponent do wyświetlania ilości gwiazdek, autora i opinni na dany pprzepis w szczegółach przepisu
+ */
 @Composable
 fun SimpleRewiev(review: Comment) {
-
     Column (
         modifier = Modifier
             .fillMaxWidth().padding(15.dp)
