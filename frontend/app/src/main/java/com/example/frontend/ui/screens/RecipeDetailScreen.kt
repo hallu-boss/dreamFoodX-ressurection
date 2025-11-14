@@ -48,7 +48,6 @@ import com.example.firstcomposeap.ui.navigation.main.MainLayout
 import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.service.RecipeViewModel
 import  com.example.frontend.ui.components.ErrorPlopup
-import com.example.frontend.ui.components.InputField
 import com.example.frontend.ui.components.RecipeCard.NetworkImage
 import com.example.frontend.ui.components.recipeDetails.IngredientList
 import com.example.frontend.ui.components.recipeDetails.StarRating
@@ -195,21 +194,22 @@ fun RecipeTab( recipeId: String,
 
 @Composable
 fun ReviewTab(viewModel: RecipeViewModel) {
-    Box(modifier = Modifier
+    Column(modifier = Modifier
         .padding(10.dp)
         .fillMaxSize()) {
 
         when {
-            viewModel.isLoading -> CircularProgressIndicator(
+            viewModel.isLoading ->Box(modifier = Modifier
+                .padding(10.dp)
+                .fillMaxSize()) { CircularProgressIndicator(
                 modifier = Modifier.align(
                     Alignment.Center
                 )
-            )
+            )}
 
             viewModel.errorMessage != null -> Text(
                 text = "Błąd: $viewModel.errorMessage",
                 color = Color.Red,
-                modifier = Modifier.align(Alignment.Center)
             )
             else -> viewModel.reviewList.forEach { review -> SimpleRewiev(review) }
 
@@ -223,9 +223,9 @@ fun SimpleRewiev(review: Comment) {
 
     Column (
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth().padding(15.dp)
             .clip(shape = RoundedCornerShape(20.dp))
-            .background(Color.DarkGray),
+            .background(Color.DarkGray).padding(5.dp, 2.dp),
     )
     {
         Spacer(modifier = Modifier.height(5.dp))
