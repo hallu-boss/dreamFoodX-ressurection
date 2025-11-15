@@ -27,6 +27,11 @@ data class  Recipe (
     val description: String,
 )
 
+@Serializable
+data class ChangePassword(
+    val oldPassword: String,
+    val newPassword: String,
+)
 
 @Serializable
 data class Ingredient(
