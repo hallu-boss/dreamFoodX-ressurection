@@ -38,6 +38,7 @@ fun HomeScreen(navController: NavHostController,
     val user = loginViewModel.user
     recipeView.loadRecipes(loginViewModel.token ?: "")
     cartViewModel.setToken(loginViewModel.token)
+    cartViewModel.getUserCart()
     val context = LocalContext.current
     val recipes = recipeView.recipes
     var filteredRecipes by remember { mutableStateOf(recipes) }
@@ -82,14 +83,18 @@ fun HomeScreen(navController: NavHostController,
                             modifier = Modifier.fillMaxSize()
                         ) {
                             items(filteredRecipes) { recipe ->
-                                Log.d("isPurchased", "${recipe.id} ${recipe.isPurchased}")
+                                val isRecipeInCart = cartViewModel.cart?.items?.any { it.recipeId == recipe.id } == true
+
+                                Log.d("isInCart", "${isRecipeInCart}")
+
                                 RecipeCoverItem(
                                     recipe = recipe,
-                                    onAddToCart = { recipeId -> cartViewModel.addToCart(recipeId)
-                                        if( cartViewModel.successMessage != null)
-                                            Toast.makeText(context, cartViewModel.successMessage, Toast.LENGTH_LONG ).show()
-                                        if( cartViewModel.errorMessage != null)
-                                            Toast.makeText(context, cartViewModel.errorMessage, Toast.LENGTH_LONG ).show()
+                                    isInCart = isRecipeInCart,
+                                    onAddToCart = { recipeId ->
+                                        if( !isRecipeInCart)
+                                            cartViewModel.addToCart(recipeId)
+                                        else
+                                            cartViewModel.removeFromCart(recipeId)
                                                   },
                                     onAddToColection = {
                                         idRecipe -> recipeView.addOrRemoveFreeRecipeToUser(idRecipe, loginViewModel.token ?: "")
@@ -100,6 +105,7 @@ fun HomeScreen(navController: NavHostController,
                                                        },
                                     onClick = { navController.navigate("recipeDetail/${recipe.id}") },
                                 )
+
                             }
                         }
                     }

@@ -42,6 +42,8 @@ import com.example.frontend.R
 import com.example.frontend.ui.components.icons.Add_shopping_cart
 import com.example.frontend.ui.components.icons.Heart_minus
 import com.example.frontend.ui.components.icons.Heart_plus
+import com.example.frontend.ui.components.icons.Remove_shopping_cart
+import com.example.frontend.ui.service.CartViewModel
 
 
 private fun getStarColor(ocena: Double): Color {
@@ -61,6 +63,7 @@ fun getPrice(cena : Double) : String {
 
 @Composable
 fun RecipeCoverItem(recipe: RecipeCover,
+                    isInCart: Boolean,
                     onClick: () -> Unit,
                     onAddToCart: (Int) -> Unit,
                     onAddToColection: (Int) -> Unit
@@ -127,7 +130,8 @@ fun RecipeCoverItem(recipe: RecipeCover,
                 Text(recipe.cookingTime)
                 Spacer(modifier = Modifier.width(25.dp))
 
-                CorrectButton(recipe, onAddToCart, onAddToColection)
+                CorrectButton(recipe, isInCart = isInCart,
+                    onAddToCart, onAddToColection)
             }
         }
     }
@@ -135,17 +139,22 @@ fun RecipeCoverItem(recipe: RecipeCover,
 
 @Composable
 fun CorrectButton(recipe: RecipeCover,
+                  isInCart: Boolean,
                   onAddToCart: (Int) -> Unit,
                   onAddToColection: (Int) -> Unit)
 {
     var isPurchase by remember { mutableStateOf(recipe.isPurchased) }
+    var isInCartRemember by remember { mutableStateOf(isInCart) }
+
+
 
     if( recipe.price > 0 && !(recipe.isOwned == true)) {
         Button(onClick = {
             onAddToCart(recipe.id)
+            isInCartRemember = !isInCartRemember
         }) {
             Icon(
-                imageVector = Add_shopping_cart,
+                imageVector = if (!isInCartRemember) Add_shopping_cart else Remove_shopping_cart,
                 contentDescription = "Dodaj do koszyka"
             )
         }
