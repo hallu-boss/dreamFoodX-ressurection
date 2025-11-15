@@ -14,7 +14,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import com.example.frontend.ui.service.UserProfile
 
@@ -61,7 +60,6 @@ fun EditUserDialog(
         confirmButton = {
             TextButton(onClick = {
                 val updatedUser = user.copy(
-
                     name = imie,
                     surname = nazwisko,
                     email = email

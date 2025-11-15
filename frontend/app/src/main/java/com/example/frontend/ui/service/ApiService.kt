@@ -8,6 +8,7 @@ import RecipeResponse
 import RegisterRequest
 import RegisterResponse
 import Review
+import User
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.Response
@@ -30,6 +31,9 @@ interface ApiService {
 
     @GET("auth/profile")
     suspend fun getProfile() : Response<UserProfile>
+
+    @PUT("auth/profile")
+    suspend fun updateProfile(@Body user: User) : Response<MessageResponse>
 
     @GET("recipe/covers")
     suspend fun getRecipeCovers(

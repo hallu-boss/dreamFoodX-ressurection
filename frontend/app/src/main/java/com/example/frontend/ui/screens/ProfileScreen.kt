@@ -78,7 +78,12 @@ fun ProfileScreen(navController: NavHostController,
             user = userProfile,
             onDismiss = { showDialog = false },
             onConfirm = { updatedUser ->
-//                TODO: modyfikacja
+                userViewModel.updateProfile(
+                    name =  updatedUser.name,
+                    surname = updatedUser.surname,
+                    email = updatedUser.email,
+                    cookingHours = userProfile!!.cookingHours
+                )
                 showDialog = false
             }
         )

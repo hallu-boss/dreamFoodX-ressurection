@@ -13,6 +13,7 @@ class LoginViewModel : ViewModel() {
     var user by mutableStateOf<User?>(null)
     var token by mutableStateOf<String?>(null)
     var errorMessage by mutableStateOf<String?>(null)
+    var succesfulMessage by mutableStateOf<String?>(null)
     var userProfile by mutableStateOf<UserProfile?>(null)
 
     fun login(email: String, password: String) {
@@ -40,6 +41,30 @@ class LoginViewModel : ViewModel() {
                     userProfile = response.body()
                 } else {
                     errorMessage = "Błąd Pobrania danych użytkownika: ${response.errorBody()?.string()}"
+                }
+            } catch (e: Exception) {
+                errorMessage = e.localizedMessage
+            }
+        }
+    }
+
+    fun updateProfile(name: String, surname: String, email: String, cookingHours: Float) {
+        val newUser = User(
+            id =  user!!.id,
+            name =  name,
+            surname = surname,
+            email = email ,
+            cookingHours = cookingHours
+        )
+
+        viewModelScope.launch {
+            try {
+                val response = ApiClient.getApi(token ?: "").updateProfile(newUser)
+                if (response.isSuccessful) {
+                    succesfulMessage = response.body()!!.message
+                    downloadUserProfile()
+                } else {
+                    errorMessage = "Błąd aktualizacji danych użytkownika: ${response.errorBody()?.string()}"
                 }
             } catch (e: Exception) {
                 errorMessage = e.localizedMessage

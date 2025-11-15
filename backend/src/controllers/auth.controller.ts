@@ -156,10 +156,9 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
 export const updateProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = (req as any).user.id;
-
+    console.log("updateProfile")
     const { name, surname, email, cookingHours } = req.body;
-
-    // Walidacja minimalna – możesz rozbudować wg potrzeb
+    console.log("updateProfile" + name + "  " + surname + "  " + email + "  " + cookingHours )
     if (!name && !surname && !email && cookingHours === undefined) {
       return res.status(400).json({ message: "Brak danych do aktualizacji" });
     }
