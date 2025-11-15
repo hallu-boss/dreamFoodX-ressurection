@@ -109,8 +109,7 @@ fun ProfileScreen(navController: NavHostController,
         ChangePasswordDialog(
             onDismiss = { showPasswordDialog = false },
             onConfirm = { oldPassword, newPassword  ->
-//               TODO: userViewModel.updatePassword(oldPassword, newPassword)
-                showPasswordDialog = false
+                userViewModel.updatePassword(oldPassword, newPassword)
             }
         )
     }

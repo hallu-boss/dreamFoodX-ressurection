@@ -71,4 +71,28 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
+
+    var passwordChangeSuccess by mutableStateOf(false)
+    fun updatePassword(oldPassword: String, newPassword:String ) {
+        val newPassword = ChangePassword(oldPassword, newPassword)
+        viewModelScope.launch {
+            try {
+                val response = ApiClient.getApi(token ?: "").updatePassword(newPassword)
+                if (response.isSuccessful) {
+                    succesfulMessage = response.body()?.message
+                    passwordChangeSuccess = true
+                    errorMessage = null
+                } else {
+                    errorMessage = response.errorBody()?.string() ?: "Nieznany błąd (${response.code()})"
+                    passwordChangeSuccess = false
+                }
+            }
+            catch (e : Exception ) {
+                errorMessage = e.localizedMessage
+                passwordChangeSuccess = false
+            }
+        }
+    }
+
+
 }

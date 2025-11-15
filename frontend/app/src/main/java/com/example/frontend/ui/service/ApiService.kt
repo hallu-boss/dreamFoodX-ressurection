@@ -35,6 +35,9 @@ interface ApiService {
     @PUT("auth/profile")
     suspend fun updateProfile(@Body user: User) : Response<MessageResponse>
 
+    @PUT("auth/password")
+    suspend fun updatePassword(@Body password: ChangePassword) : Response<MessageResponse>
+
     @GET("recipe/covers")
     suspend fun getRecipeCovers(
         @Query("page") page: Int = 1,
