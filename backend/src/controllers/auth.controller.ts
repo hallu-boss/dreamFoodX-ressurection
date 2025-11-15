@@ -150,3 +150,42 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+
+
+export const updateProfile = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = (req as any).user.id;
+
+    const { name, surname, email, cookingHours } = req.body;
+
+    // Walidacja minimalna – możesz rozbudować wg potrzeb
+    if (!name && !surname && !email && cookingHours === undefined) {
+      return res.status(400).json({ message: "Brak danych do aktualizacji" });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        name,
+        surname,
+        email,
+        cookingHours,
+      },
+      select: {
+        id: true,
+        name: true,
+        surname: true,
+        email: true,
+        cookingHours: true,
+      }
+    });
+
+    res.status(200).json(updatedUser);
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      return res.status(409).json({ message: "Email jest już używany" });
+    }
+    next(error);
+  }
+};
