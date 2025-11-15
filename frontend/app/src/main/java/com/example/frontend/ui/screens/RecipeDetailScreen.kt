@@ -299,16 +299,20 @@ fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit , r
                     yourStars = userRating,
                     yourOpinion = recipeViewModel.userRatingOpinion ,
                     onRatingChanged = { newRating, userOpinion ->
-                    userRating = newRating
-                    val newReview = Review(
-                        recipeId = recipeDetail.id,
-                        rating = newRating,
-                        opinion = userOpinion,
-                        userId = loginViewModel.user?.id ?: 0
-                    )
-                        recipeViewModel.createRecipeUserRating(newReview, token = loginViewModel.token
-                            ?: "")
-                        recipeViewModel.userRatingOpinion = userOpinion
+                        {
+                            userRating = newRating
+                            val newReview = Review(
+                                recipeId = recipeDetail.id,
+                                rating = newRating,
+                                opinion = userOpinion,
+                                userId = loginViewModel.user?.id ?: 0
+                            )
+                            recipeViewModel.createRecipeUserRating(
+                                newReview, token = loginViewModel.token
+                                    ?: ""
+                            )
+                            recipeViewModel.userRatingOpinion = userOpinion
+                        }
                 } )
                 Spacer(modifier = Modifier.height(10.dp))
             }
