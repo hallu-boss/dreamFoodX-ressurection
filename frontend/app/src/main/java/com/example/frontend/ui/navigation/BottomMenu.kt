@@ -21,7 +21,7 @@ fun BottomMenu(
     val items = listOf(
         MenuItem("Strona główna", drawableRes = R.drawable.meal),
         MenuItem("Koszyk", drawableRes = R.drawable.shopping),
-        MenuItem("Moje przepisy", drawableRes = R.drawable.burger),
+        MenuItem("Zapisane przepisy", drawableRes = R.drawable.burger),
         MenuItem("Konto", drawableRes = R.drawable.profile)
     )
 

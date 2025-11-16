@@ -15,7 +15,7 @@ class LoginViewModel : ViewModel() {
     var errorMessage by mutableStateOf<String?>(null)
     var succesfulMessage by mutableStateOf<String?>(null)
     var userProfile by mutableStateOf<UserProfile?>(null)
-
+    var isLoadedProfile by mutableStateOf(false)
     fun login(email: String, password: String) {
         viewModelScope.launch {
             try {
@@ -34,11 +34,13 @@ class LoginViewModel : ViewModel() {
     }
 
     fun downloadUserProfile() {
+        isLoadedProfile = false
         viewModelScope.launch {
             try {
                 val response = ApiClient.getApi(token ?: "").getProfile()
                 if (response.isSuccessful) {
                     userProfile = response.body()
+                    isLoadedProfile = true
                 } else {
                     errorMessage = "Błąd Pobrania danych użytkownika: ${response.errorBody()?.string()}"
                 }

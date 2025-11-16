@@ -85,8 +85,6 @@ fun HomeScreen(navController: NavHostController,
                             items(filteredRecipes) { recipe ->
                                 val isRecipeInCart = cartViewModel.cart?.items?.any { it.recipeId == recipe.id } == true
 
-                                Log.d("isInCart", "${isRecipeInCart}")
-
                                 RecipeCoverItem(
                                     recipe = recipe,
                                     isInCart = isRecipeInCart,
@@ -99,9 +97,9 @@ fun HomeScreen(navController: NavHostController,
                                     onAddToColection = {
                                         idRecipe -> recipeView.addOrRemoveFreeRecipeToUser(idRecipe, loginViewModel.token ?: "")
                                         if( recipeView.responseMmessage != null)
-                                            Toast.makeText(context,  recipeView.responseMmessage, Toast.LENGTH_LONG ).show()
+                                            Toast.makeText(context,  recipeView.responseMmessage, Toast.LENGTH_SHORT ).show()
                                         if( recipeView.errorMessage != null)
-                                            Toast.makeText(context, recipeView.errorMessage, Toast.LENGTH_LONG ).show()
+                                            Toast.makeText(context, recipeView.errorMessage, Toast.LENGTH_SHORT ).show()
                                                        },
                                     onClick = { navController.navigate("recipeDetail/${recipe.id}") },
                                 )

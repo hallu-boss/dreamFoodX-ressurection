@@ -1,59 +1,128 @@
 package com.example.frontend.ui.screens
 
 
+import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.MainLayout
+import com.example.frontend.ui.components.RecipeCard.RecipeCoverItem
+import com.example.frontend.ui.components.RecipeFilter
+import com.example.frontend.ui.service.CartViewModel
 import com.example.frontend.ui.service.LoginViewModel
+import com.example.frontend.ui.service.RecipeViewModel
 
 @Composable
-fun RecipeScreen(navController: NavHostController, loginViewModel: LoginViewModel) {
-    var selectedItem by remember { mutableStateOf("Moje przepisy") }
+fun RecipeScreen(navController: NavHostController,
+                 loginViewModel: LoginViewModel,
+                 cartViewModel: CartViewModel = viewModel(),
+                 recipeView: RecipeViewModel
+) {
+    val context = LocalContext.current
+    var selectedItem by remember { mutableStateOf("Zapisane przepisy") }
     loginViewModel.downloadUserProfile()
-    var profile = loginViewModel.userProfile
+
+    recipeView.loadRecipes(loginViewModel.token ?: "")
+    cartViewModel.setToken(loginViewModel.token)
+    cartViewModel.getUserCart()
+
+    var recipes = recipeView.recipes
+    var filteredRecipes by remember { mutableStateOf(recipes) }
 
     LaunchedEffect(loginViewModel.userProfile) {
-        profile = loginViewModel.userProfile
+        filteredRecipes = recipes
     }
+
 
     MainLayout(
         navController = navController,
         selectedItem = selectedItem,
         onItemSelected = { selectedItem = it }
     ) { innerPadding ->
-        Column (
+        Box(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize()
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-            Text("To jest ekran strona przepisów ", fontSize = 40.sp)
-            if( profile != null ) {
-                Column {
-                    Text("name ${profile!!.name}")
-                    Text("surname ${profile!!.surname}")
-                    Text("cookingHours ${profile!!.cookingHours}")
-                    Text("purchasedRecipes ${profile!!.purchasedRecipes}")
-                    Text("ingredients ${profile!!.ingredients}")
-                }
-            }
-            else {
-                Box(modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
+            Column (
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Dostępne przeisy ", fontSize = 40.sp)
+                Spacer(modifier = Modifier.height(25.dp))
 
+                RecipeFilter( recipes, onFiltered = { filteredRecipes = it })
+
+                when {
+                    recipeView.isLoading -> {
+                        Box(modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    recipeView.errorMessage != null -> {
+                        Text(
+                            text = "Błąd: ${recipeView.errorMessage}",
+                            color = Color.Red
+                        )
+                    }
+                    else -> {
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(filteredRecipes) { recipe ->
+                                val isRecipeInCart = cartViewModel.cart?.items?.any { it.recipeId == recipe.id } == true
+                                if( recipe.isPurchased || recipe.isOwned) {
+                                    RecipeCoverItem(
+                                        recipe = recipe,
+                                        isInCart = isRecipeInCart,
+                                        onAddToCart = { recipeId ->
+                                            cartViewModel.removeFromCart(recipeId)
+                                        },
+                                        onAddToColection = {
+                                                idRecipe -> recipeView.addOrRemoveFreeRecipeToUser(idRecipe, loginViewModel.token ?: "")
+
+                                            recipeView.loadRecipes(loginViewModel.token ?: "")
+                                            if( recipeView.responseMmessage != null)
+                                                Toast.makeText(context,  recipeView.responseMmessage, Toast.LENGTH_SHORT ).show()
+                                            if( recipeView.errorMessage != null)
+                                                Toast.makeText(context, recipeView.errorMessage, Toast.LENGTH_SHORT ).show()
+                                        },
+                                        onClick = { navController.navigate("recipeDetail/${recipe.id}") },
+                                        displayBuyButton = false
+                                    )
+                                }
+
+
+                            }
+                        }
+                    }
+                }
             }
         }
     }
+
 
 }

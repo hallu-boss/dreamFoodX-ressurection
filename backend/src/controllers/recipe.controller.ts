@@ -225,7 +225,7 @@ export const getRecipeCovers = async (
                 totalCookingTime % 60
               }min`
             : `${totalCookingTime} min`
-          : 'Brak danych';
+          : '0 h 0 min';
 
       // Policz unikalne składniki
       const uniqueIngredients = new Set(
