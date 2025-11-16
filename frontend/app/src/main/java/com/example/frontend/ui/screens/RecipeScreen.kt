@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -46,10 +48,17 @@ fun RecipeScreen(navController: NavHostController,
     var recipes = recipeView.recipes
     var filteredRecipes by remember { mutableStateOf(recipes) }
 
-    LaunchedEffect(loginViewModel.userProfile) {
+    val tabs = listOf(
+        "Moje przepisy",
+        "Ulubione"
+    )
+    var selectedTabIndex by remember { mutableStateOf(0) }
+
+
+
+    LaunchedEffect(selectedTabIndex, loginViewModel.userProfile) {
         filteredRecipes = recipes
     }
-
 
 
 
@@ -74,6 +83,16 @@ fun RecipeScreen(navController: NavHostController,
 
                 RecipeFilter( recipes, onFiltered = { filteredRecipes = it })
 
+                TabRow(selectedTabIndex = selectedTabIndex) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(
+                            selected = selectedTabIndex == index,
+                            onClick = { selectedTabIndex = index },
+                            text = { Text(title, fontSize = 22.sp) }
+                        )
+                    }
+                }
+
                 when {
                     recipeView.isLoading -> {
                         Box(modifier = Modifier.fillMaxSize(),
@@ -96,7 +115,17 @@ fun RecipeScreen(navController: NavHostController,
                         ) {
                             items(filteredRecipes) { recipe ->
                                 val isRecipeInCart = cartViewModel.cart?.items?.any { it.recipeId == recipe.id } == true
-                                if( recipe.isPurchased || recipe.isOwned) {
+                                var isRecipeTODisplay = false
+                                when (selectedTabIndex) {
+                                    0 -> {
+                                        isRecipeTODisplay = recipe.isOwned
+                                    }
+                                    1 -> {
+                                        isRecipeTODisplay = recipe.isPurchased
+                                    }
+                                }
+
+                                if( isRecipeTODisplay) {
                                     RecipeCoverItem(
                                         recipe = recipe,
                                         isInCart = isRecipeInCart,
