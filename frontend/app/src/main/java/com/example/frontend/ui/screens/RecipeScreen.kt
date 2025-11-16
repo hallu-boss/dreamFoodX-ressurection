@@ -88,7 +88,7 @@ fun RecipeScreen(navController: NavHostController,
 
                 if( showAddButton) {
                     FullSizeButton(
-                        text = "Dpdaj przepis",
+                        text = "Dodaj przepis",
                         onClick = {  } // TODO
                     )
                 }
