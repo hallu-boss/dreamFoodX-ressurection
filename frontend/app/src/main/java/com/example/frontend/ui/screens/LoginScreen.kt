@@ -92,14 +92,17 @@ fun LoginScreen(navController: NavHostController,
                 text = "Zaloguj się",
                 onClick = {
                     if (email.isEmpty() || password.isEmpty()) {
-                        val context = null
                         Toast.makeText(context, "Wypełnij wszystkie pola", Toast.LENGTH_LONG).show()
                     } else {
                         viewModel.login(email, password)
                     }
                 }
             )
-
+            errorMessage?.let { error ->
+                LaunchedEffect(error) {
+                    Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+                }
+            }
             Spacer(modifier = Modifier.height(16.dp))
             FullSizeButton(
                 text = "Zarejestruj się",

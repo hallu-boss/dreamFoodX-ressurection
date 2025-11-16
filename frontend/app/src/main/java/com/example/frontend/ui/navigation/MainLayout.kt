@@ -12,6 +12,7 @@ fun MainLayout(
     onItemSelected: (String) -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
+
     Scaffold(
         bottomBar = {
             BottomMenu(

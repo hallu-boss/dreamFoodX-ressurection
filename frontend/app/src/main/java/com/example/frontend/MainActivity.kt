@@ -31,8 +31,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             val recipeView : RecipeViewModel = viewModel ()
             val loginViewModel: LoginViewModel = viewModel()
-            loginViewModel.login("testUser@testUser.testUser", "testUser")
-
+            loginViewModel.login("john.doe@example.com", "password123")
+            //john.doe@example.com  password123
             DreamFoodAppTheme {
                 val navController: NavHostController = rememberNavController()
                 val cartViewModel: CartViewModel = viewModel()
@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
                     composable(Screen.Register.route) { RegisterScreen(navController) }
                     composable(Screen.Login.route) { LoginScreen(navController, viewModel = loginViewModel) }
                     composable(Screen.Home.route) { HomeScreen(navController, loginViewModel = loginViewModel, cartViewModel, recipeView = recipeView ) }
-                    composable(Screen.Profile.route) { ProfileScreen(navController) }
+                    composable(Screen.Profile.route) { ProfileScreen(navController, loginViewModel = loginViewModel) }
                     composable(Screen.Shopping.route ){ ShoppingBasketScreen(navController, loginViewModel, cartViewModel) }
                     composable(Screen.Recipes.route) { RecipeScreen(navController) }
                     composable(Screen.Test.route) { TestScreen(navController, loginViewModel = loginViewModel) }

@@ -30,4 +30,11 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
+    fun logout() {
+        user = null
+        token = null
+    }
+    fun isLoggedIn(): Boolean {
+        return token != null && user != null
+    }
 }
