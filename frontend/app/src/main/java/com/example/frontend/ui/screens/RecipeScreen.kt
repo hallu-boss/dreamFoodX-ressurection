@@ -36,7 +36,7 @@ fun RecipeScreen(navController: NavHostController,
                  recipeView: RecipeViewModel
 ) {
     val context = LocalContext.current
-    var selectedItem by remember { mutableStateOf("Zapisane przepisy") }
+    var selectedItem by remember { mutableStateOf("Moje przepisy") }
     loginViewModel.downloadUserProfile()
 
     recipeView.loadRecipes(loginViewModel.token ?: "")
@@ -49,6 +49,8 @@ fun RecipeScreen(navController: NavHostController,
     LaunchedEffect(loginViewModel.userProfile) {
         filteredRecipes = recipes
     }
+
+
 
 
     MainLayout(

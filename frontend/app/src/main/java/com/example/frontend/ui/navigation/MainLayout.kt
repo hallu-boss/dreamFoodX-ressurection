@@ -19,7 +19,7 @@ fun MainLayout(
                 onItemSelected = { item ->
                     onItemSelected(item)
                     when (item) {
-                        "Zapisane przepisy" -> navController.navigate(Screen.Recipes.route) {
+                        "Moje przepisy" -> navController.navigate(Screen.Recipes.route) {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
                         }
