@@ -1,5 +1,6 @@
 package com.example.frontend.ui.service
 
+import Comment
 import LoginRequest
 import LoginResponse
 import RecipeCoversResponse
@@ -7,12 +8,13 @@ import RecipeResponse
 import RegisterRequest
 import RegisterResponse
 import Review
-import ReviewResponse
+import User
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -27,6 +29,14 @@ interface ApiService {
     @POST("auth/login")
     suspend fun login(@Body body: LoginRequest): Response<LoginResponse>
 
+    @GET("auth/profile")
+    suspend fun getProfile() : Response<UserProfile>
+
+    @PUT("auth/profile")
+    suspend fun updateProfile(@Body user: User) : Response<MessageResponse>
+
+    @PUT("auth/password")
+    suspend fun updatePassword(@Body password: ChangePassword) : Response<MessageResponse>
 
     @GET("recipe/covers")
     suspend fun getRecipeCovers(
@@ -50,9 +60,15 @@ interface ApiService {
     suspend fun getRecipeReview(
         @Query("recipeId") recipeId: Int,
         @Query("userId") userId: Int
-    ): Response<ReviewResponse>
+    ): Response<Review>
 
+    @GET("recipe/reviews/all")
+    suspend fun getRecipeReviews(
+        @Query("recipeId") recipeId: Int
+    ): Response<List<Comment>>
 
+    @PUT("recipe/user/purchasedRecipes")
+    suspend fun addOrRemoveFreeRecipeToUser(@Query("recipeId") recipeId: Int) : Response<MessageResponse>
 
     @GET("cart")
     suspend fun getCart() : Response<Cart>
@@ -69,5 +85,7 @@ interface ApiService {
     suspend fun deleteFromCart(
         @Path("recipeId") recipeId: Int
     ): Response<MessageResponse>
+
+
 
 }

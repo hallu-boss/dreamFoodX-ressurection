@@ -225,7 +225,7 @@ export const getRecipeCovers = async (
                 totalCookingTime % 60
               }min`
             : `${totalCookingTime} min`
-          : 'Brak danych';
+          : '0 h 0 min';
 
       // Policz unikalne składniki
       const uniqueIngredients = new Set(
@@ -589,7 +589,7 @@ export const createRecipeReviews = async (
   }
 };
 
-export const getRecipeReview = async (
+export const getRecipeUserReview = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -631,6 +631,133 @@ export const getRecipeReview = async (
     next(error);
   }
 };
+
+
+
+export const getRecipeReviews = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const recipeId = Number(req.query.recipeId);
+
+    if (!recipeId) {
+      throw new ValidationError('Brakuje wymaganego pola: recipeId', 400);
+    }
+
+    const reviews = await prisma.review.findMany({
+      where: { recipeId },
+      select: {
+        rating: true,
+        opinion: true,
+        userId: true,
+      },
+    });
+
+    
+        const reviewsWithUserData = await Promise.all(
+      reviews.map(async (review) => {
+        const user = await prisma.user.findUnique({
+          where: { id: review.userId },
+          select: { name: true, surname: true },
+        });
+
+        return {
+          recipeId,
+          rating: review.rating,
+          opinion: review.opinion,
+          name: user?.name || 'Nieznany',
+          surname: user?.surname || '',
+        };
+      })
+    );
+
+    res.status(200).json(reviewsWithUserData);
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const addOrRemoveFreeRecipeToUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    
+    console.log("addRecipeToUserRecipes: ")
+    const recipeId = Number(req.query.recipeId);
+    const userId = (req as any).user.id;
+
+
+  console.log("getRecipeReview: " + recipeId + "   " + userId)
+    if (!recipeId || !userId) {
+      throw new ValidationError('Brakuje wymaganych pól: recipeId lub userId', 400);
+    }
+
+    // Sprawdź, czy istnieje wybrany przepis
+    const recipe = await prisma.recipe.findFirst({
+      where: { id: recipeId },
+    });
+
+    if (!recipe) {
+      // Jeśli brak przepisu — zwróć komunikat
+      res.status(404).json({ error: 'Wybrano nieprawidłowy przepis' });
+    }
+
+     // Sprawdź, czy użytkownik ma już ten przepis w purchasedRecipes
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { purchasedRecipes: true },
+    });
+    
+    const alreadyHasRecipe = user?.purchasedRecipes.some(r => r.id === recipeId);
+    let updatedUser;
+
+    // Jeżeli uzytkownik nie ma przepisu należy go dodać
+     if (!alreadyHasRecipe) {
+      // 🔹 Dodaj przepis do purchasedRecipes
+      updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: {
+          purchasedRecipes: {
+            connect: { id: recipeId },
+          },
+        },
+        include: { purchasedRecipes: true },
+      });
+      console.log("✅ Przepis dodany do użytkownika.");
+    } else {
+      // 🔹 Usuń przepis z purchasedRecipes
+      updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: {
+          purchasedRecipes: {
+            disconnect: { id: recipeId },
+          },
+        },
+        include: { purchasedRecipes: true },
+      });
+      console.log("🗑️ Przepis usunięty z zapisanych.");
+    }
+
+    
+
+
+    res.status(200).json({
+      message: alreadyHasRecipe
+        ? "Przepis usunięty z zapisanych"
+        : "Przepis dodany do zapisanych",
+      purchasedRecipes: updatedUser.purchasedRecipes,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 
 export const hasAccesToRecipe = async (

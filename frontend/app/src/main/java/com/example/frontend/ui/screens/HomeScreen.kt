@@ -1,5 +1,6 @@
 package com.example.frontend.ui.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,8 +36,9 @@ fun HomeScreen(navController: NavHostController,
 ) {
     var selectedItem by remember { mutableStateOf("Strona główna") }
     val user = loginViewModel.user
-    recipeView.loadRecipes()
+    recipeView.loadRecipes(loginViewModel.token ?: "")
     cartViewModel.setToken(loginViewModel.token)
+    cartViewModel.getUserCart()
     val context = LocalContext.current
     val recipes = recipeView.recipes
     var filteredRecipes by remember { mutableStateOf(recipes) }
@@ -57,7 +59,7 @@ fun HomeScreen(navController: NavHostController,
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Dostępne przeisy ", fontSize = 40.sp)
+                Text("Dostępne przepisy ", fontSize = 40.sp)
                 Spacer(modifier = Modifier.height(25.dp))
                 Text("Witaj, ${user?.name} ${user?.surname} - ${user?.id}", fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(20.dp))
@@ -81,17 +83,27 @@ fun HomeScreen(navController: NavHostController,
                             modifier = Modifier.fillMaxSize()
                         ) {
                             items(filteredRecipes) { recipe ->
+                                val isRecipeInCart = cartViewModel.cart?.items?.any { it.recipeId == recipe.id } == true
+
                                 RecipeCoverItem(
                                     recipe = recipe,
-                                    onAddToCart = { recipeId -> cartViewModel.addToCart(recipeId)
-                                        if( cartViewModel.successMessage != null)
-                                            Toast.makeText(context, cartViewModel.successMessage, Toast.LENGTH_LONG ).show()
-                                        if( cartViewModel.errorMessage != null)
-                                            Toast.makeText(context, cartViewModel.errorMessage, Toast.LENGTH_LONG ).show()
+                                    isInCart = isRecipeInCart,
+                                    onAddToCart = { recipeId ->
+                                        if( !isRecipeInCart)
+                                            cartViewModel.addToCart(recipeId)
+                                        else
+                                            cartViewModel.removeFromCart(recipeId)
                                                   },
-                                    onAddToColection = {  },
+                                    onAddToColection = {
+                                        idRecipe -> recipeView.addOrRemoveFreeRecipeToUser(idRecipe, loginViewModel.token ?: "")
+                                        if( recipeView.responseMmessage != null)
+                                            Toast.makeText(context,  recipeView.responseMmessage, Toast.LENGTH_SHORT ).show()
+                                        if( recipeView.errorMessage != null)
+                                            Toast.makeText(context, recipeView.errorMessage, Toast.LENGTH_SHORT ).show()
+                                                       },
                                     onClick = { navController.navigate("recipeDetail/${recipe.id}") },
                                 )
+
                             }
                         }
                     }

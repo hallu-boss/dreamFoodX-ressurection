@@ -2,6 +2,7 @@ package com.example.frontend.ui.components.RecipeCard
 
 import RecipeCover
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,6 +23,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -34,8 +39,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.frontend.R
-import com.example.frontend.ui.components.icons.Add
 import com.example.frontend.ui.components.icons.Add_shopping_cart
+import com.example.frontend.ui.components.icons.Heart_minus
+import com.example.frontend.ui.components.icons.Heart_plus
+import com.example.frontend.ui.components.icons.Remove_shopping_cart
 
 
 private fun getStarColor(ocena: Double): Color {
@@ -55,9 +62,11 @@ fun getPrice(cena : Double) : String {
 
 @Composable
 fun RecipeCoverItem(recipe: RecipeCover,
+                    isInCart: Boolean,
                     onClick: () -> Unit,
                     onAddToCart: (Int) -> Unit,
-                    onAddToColection: (Int) -> Unit
+                    onAddToColection: (Int) -> Unit,
+                    displayBuyButton: Boolean = true
                     ) {
     Column(
         modifier = Modifier
@@ -121,31 +130,55 @@ fun RecipeCoverItem(recipe: RecipeCover,
                 Text(recipe.cookingTime)
                 Spacer(modifier = Modifier.width(25.dp))
 
-                if( recipe.price > 0 && !(recipe.isOwned?: false)) {
-                    Button(onClick = {
-                        onAddToCart(recipe.id)
-                    }) {
-                        Icon(
-                            imageVector = Add_shopping_cart,
-                            contentDescription = "Dodaj do koszyka"
-                        )
-                    }
-                }
-                else if( recipe.price == 0.0 && !(recipe.isPurchased?: false)){
-                    Button(onClick = {
-                        onAddToColection(recipe.id)
-                    }) {
-                        Icon(
-                            imageVector = Add,
-                            contentDescription = "Dodaj do kolekcji przepisów"
-                        )
-                    }
-                }
+                CorrectButton(recipe, isInCart = isInCart,
+                    onAddToCart,
+                    onAddToColection,
+                    displayBuyButton = displayBuyButton)
             }
         }
     }
 }
 
+@Composable
+fun CorrectButton(recipe: RecipeCover,
+                  isInCart: Boolean,
+                  onAddToCart: (Int) -> Unit,
+                  onAddToColection: (Int) -> Unit,
+                  displayBuyButton: Boolean = true,
+)
+{
+    var isPurchase by remember { mutableStateOf(recipe.isPurchased) }
+    var isInCartRemember by remember { mutableStateOf(isInCart) }
+
+
+
+    if(displayBuyButton && recipe.price > 0 && !(recipe.isOwned == true)) {
+        Button(onClick = {
+            onAddToCart(recipe.id)
+            isInCartRemember = !isInCartRemember
+        }) {
+            Icon(
+                imageVector = if (!isInCartRemember) Add_shopping_cart else Remove_shopping_cart,
+                contentDescription = "Dodaj do koszyka"
+            )
+        }
+    }
+    else if( recipe.price == 0.0 ){
+
+
+        Button(onClick = {
+            onAddToColection(recipe.id)
+            Log.d("CorrectButton", "${isPurchase}")
+            isPurchase = !isPurchase
+            recipe.isPurchased = isPurchase
+        }) {
+            Icon(
+                imageVector = if (!isPurchase) Heart_plus else Heart_minus,
+                contentDescription = "Dodaj do kolekcji przepisów"
+            )
+        }
+    }
+}
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable

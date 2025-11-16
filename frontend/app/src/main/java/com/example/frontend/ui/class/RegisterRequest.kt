@@ -11,7 +11,7 @@ data class User(
     val name: String,
     val surname: String,
     val email: String,
-    val cookingHours: Int
+    val cookingHours: Float
 )
 
 data class RegisterResponse(
