@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.MainLayout
+import com.example.frontend.ui.components.FullSizeButton
 import com.example.frontend.ui.components.RecipeCard.RecipeCoverItem
 import com.example.frontend.ui.components.RecipeFilter
 import com.example.frontend.ui.service.CartViewModel
@@ -54,10 +55,12 @@ fun RecipeScreen(navController: NavHostController,
     )
     var selectedTabIndex by remember { mutableStateOf(0) }
 
-
+    var showAddButton by remember { mutableStateOf(false) }
 
     LaunchedEffect(selectedTabIndex, loginViewModel.userProfile) {
         filteredRecipes = recipes
+        showAddButton = (selectedTabIndex == 0)
+
     }
 
 
@@ -83,6 +86,13 @@ fun RecipeScreen(navController: NavHostController,
 
                 RecipeFilter( recipes, onFiltered = { filteredRecipes = it })
 
+                if( showAddButton) {
+                    FullSizeButton(
+                        text = "Dpdaj przepis",
+                        onClick = {  } // TODO
+                    )
+                }
+                
                 TabRow(selectedTabIndex = selectedTabIndex) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
