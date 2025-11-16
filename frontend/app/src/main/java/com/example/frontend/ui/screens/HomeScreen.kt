@@ -59,7 +59,7 @@ fun HomeScreen(navController: NavHostController,
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Dostępne przeisy ", fontSize = 40.sp)
+                Text("Dostępne przepisy ", fontSize = 40.sp)
                 Spacer(modifier = Modifier.height(25.dp))
                 Text("Witaj, ${user?.name} ${user?.surname} - ${user?.id}", fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(20.dp))

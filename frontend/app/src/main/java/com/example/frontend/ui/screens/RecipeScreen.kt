@@ -81,7 +81,7 @@ fun RecipeScreen(navController: NavHostController,
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Dostępne przeisy ", fontSize = 40.sp)
+                Text("Dostępne przepisy ", fontSize = 40.sp)
                 Spacer(modifier = Modifier.height(25.dp))
 
                 RecipeFilter( recipes, onFiltered = { filteredRecipes = it })
