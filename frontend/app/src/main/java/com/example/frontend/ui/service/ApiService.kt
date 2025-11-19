@@ -1,5 +1,6 @@
 package com.example.frontend.ui.service
 
+import GoogleLoginRequest
 import LoginRequest
 import LoginResponse
 import RecipeCoversResponse
@@ -26,6 +27,9 @@ interface ApiService {
 
     @POST("auth/login")
     suspend fun login(@Body body: LoginRequest): Response<LoginResponse>
+
+    @POST("auth/google")
+    suspend fun loginGoogle(@Body body: GoogleLoginRequest): Response<LoginResponse>
 
 
     @GET("recipe/covers")

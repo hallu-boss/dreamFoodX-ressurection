@@ -20,6 +20,8 @@ model User {
   reviews          Review[]
   cart             Cart?
   orders           Order[]
+  googleId         String?      @unique
+  avatarUrl        String?
   purchasedRecipes Recipe[]     @relation("PurchasedRecipes")
 }
 

@@ -10,3 +10,6 @@ data class LoginResponse(
     val user: User
 )
 
+data class GoogleLoginRequest(
+    val idToken: String
+)

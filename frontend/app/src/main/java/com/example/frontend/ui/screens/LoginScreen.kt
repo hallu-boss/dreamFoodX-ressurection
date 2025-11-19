@@ -33,8 +33,13 @@ import com.example.frontend.ui.components.LoginBySocialmedia
 import com.example.frontend.ui.components.PasswordInputField
 import com.example.frontend.ui.components.validateEmail
 import com.example.frontend.ui.service.LoginViewModel
-
-
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.util.Log
+private const val TAG = "GoogleSignInDebug"
 @Composable
 fun LoginScreen(navController: NavHostController,
                 viewModel: LoginViewModel = viewModel(),
@@ -45,6 +50,38 @@ fun LoginScreen(navController: NavHostController,
     val user = viewModel.user
     val errorMessage = viewModel.errorMessage
     val context = LocalContext.current
+    val googleClientId = context.getString(R.string.default_web_client_id)
+
+    val gso = remember {
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(googleClientId)
+            .requestEmail()
+            .build()
+    }
+    val googleSignInClient = remember { GoogleSignIn.getClient(context, gso) }
+
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val idToken = account.idToken
+            Log.d(TAG, "ID Token (do Back-endu): $idToken")
+
+            if (idToken != null) {
+                viewModel.loginWithGoogle(idToken)
+            } else {
+                Toast.makeText(context, "Brak tokena Google. Sprawdź konfigurację Web Client ID w GCP.", Toast.LENGTH_LONG).show()
+                Log.e(TAG, "Błąd konfiguracji: Uzyskano konto, ale brak tokena ID.")
+            }
+        } catch (e: ApiException) {
+            val errorMessage = "Logowanie Google nie powiodło się: ${e.statusCode}"
+            Log.e(TAG, errorMessage)
+            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+        }
+    }
 
 
     Box(
@@ -116,8 +153,10 @@ fun LoginScreen(navController: NavHostController,
                 horizontalArrangement = Arrangement.SpaceEvenly) {
 
                 LoginBySocialmedia(id = R.drawable.logo_fb,
-                    contentDescription = "Facebook",
-                    onClick = {/* TODO obsługa logowanie facebook */})
+                    contentDescription = "Google",
+                    onClick = {
+                        googleSignInLauncher.launch(googleSignInClient.signInIntent)
+                    })
 
                 LoginBySocialmedia(id = R.drawable.logo_inst,
                     contentDescription = "Instagram",
