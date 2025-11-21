@@ -39,6 +39,8 @@ import com.google.android.gms.common.api.ApiException
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import android.util.Log
+import com.facebook.FacebookSdk
+import com.facebook.appevents.AppEventsLogger
 private const val TAG = "GoogleSignInDebug"
 @Composable
 fun LoginScreen(navController: NavHostController,
