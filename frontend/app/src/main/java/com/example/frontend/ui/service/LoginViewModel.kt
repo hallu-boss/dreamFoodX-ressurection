@@ -1,5 +1,6 @@
 package com.example.frontend.ui.service
 
+import FacebookLoginRequest
 import GoogleLoginRequest
 import LoginRequest
 import User
@@ -50,6 +51,24 @@ class LoginViewModel : ViewModel() {
                     user = body?.user
                 } else {
                     errorMessage = "Błąd logowania Google: ${response.code()}"
+                }
+            } catch (e: Exception) {
+                errorMessage = e.localizedMessage
+            }
+        }
+    }
+    fun loginWithFacebook(accessToken: String) {
+        viewModelScope.launch {
+            try {
+                // Zakładam, że stworzysz klasę FacebookLoginRequest podobną do GoogleLoginRequest
+                val response = ApiClient.api.loginFacebook(FacebookLoginRequest(accessToken))
+
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    token = body?.token
+                    user = body?.user
+                } else {
+                    errorMessage = "Błąd logowania Facebook: ${response.code()}"
                 }
             } catch (e: Exception) {
                 errorMessage = e.localizedMessage

@@ -1,6 +1,6 @@
 package com.example.frontend.ui.screens
 
-
+import android.app.Activity
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,13 +38,24 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import android.util.Log
+
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
+
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+import androidx.compose.runtime.DisposableEffect
+import android.util.Log
+
+
 private const val TAG = "GoogleSignInDebug"
 @Composable
 fun LoginScreen(navController: NavHostController,
                 viewModel: LoginViewModel = viewModel(),
+                callbackManager: CallbackManager
                 ) {
     var email by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
@@ -53,6 +64,45 @@ fun LoginScreen(navController: NavHostController,
     val errorMessage = viewModel.errorMessage
     val context = LocalContext.current
     val googleClientId = context.getString(R.string.default_web_client_id)
+
+
+
+
+    // Funkcja do uruchomienia logowania FB
+    val loginWithFacebook = {
+        LoginManager.getInstance().logInWithReadPermissions(
+            context as Activity, // Rzutowanie na Activity jest wymagane przez SDK
+            listOf("email", "public_profile")
+        )
+    }
+
+    // Rejestracja Callbacka (nasłuchiwanie wyniku)
+    DisposableEffect(Unit) {
+        val loginManager = LoginManager.getInstance()
+        loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onSuccess(result: LoginResult) {
+                // Mamy token z Facebooka! Wysyłamy go do naszego backendu
+                Log.d("FB_LOGIN", "Token: ${result.accessToken.token}")
+                viewModel.loginWithFacebook(result.accessToken.token)
+            }
+
+            override fun onCancel() {
+                Log.d("FB_LOGIN", "Anulowano logowanie")
+            }
+
+            override fun onError(error: FacebookException) {
+                Log.e("FB_LOGIN", "Błąd: ${error.message}")
+                Toast.makeText(context, "Błąd FB: ${error.message}", Toast.LENGTH_LONG).show()
+            }
+        })
+
+        onDispose {
+            loginManager.unregisterCallback(callbackManager)
+        }
+    }
+
+
+
 
     val gso = remember {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -162,7 +212,7 @@ fun LoginScreen(navController: NavHostController,
 
                 LoginBySocialmedia(id = R.drawable.logo_inst,
                     contentDescription = "Instagram",
-                    onClick = {/* TODO obsługa logowanie instagram */})
+                    onClick = {loginWithFacebook()})
             }
 
 

@@ -1,5 +1,6 @@
 package com.example.frontend.ui.service
 
+import FacebookLoginRequest
 import GoogleLoginRequest
 import LoginRequest
 import LoginResponse
@@ -31,6 +32,8 @@ interface ApiService {
     @POST("auth/google")
     suspend fun loginGoogle(@Body body: GoogleLoginRequest): Response<LoginResponse>
 
+    @POST("auth/facebook") // Endpoint, który stworzymy w Node.js
+    suspend fun loginFacebook(@Body request: FacebookLoginRequest): Response<LoginResponse>
 
     @GET("recipe/covers")
     suspend fun getRecipeCovers(

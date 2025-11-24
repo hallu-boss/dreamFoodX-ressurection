@@ -6,7 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiClient {
-    private const val BASE_URL = "https://09f1d7f96c8c.ngrok-free.app/api/" // IP danego komputera w scieci lokalnej  Należy zmienic też w network_security_config
+    private const val BASE_URL = "https://7e510bc1e283.ngrok-free.app/api/" // IP danego komputera w scieci lokalnej  Należy zmienic też w network_security_config
     // 10.0.2.2 to adres hosta komputera gdzie działa emulator
     //private const val BASE_URL = "http://10.0.2.2:5000/api/"
     //https://2274e65927fb.ngrok-free.app/api/auth/google

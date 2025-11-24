@@ -2,8 +2,8 @@
     <string name="app_name">DreamFood</string>
     <string name="default_web_client_id">330956432900-1u2tum9bpr8s1adp4mc9etgan6bnb331.apps.googleusercontent.com</string>
 <!--    TO DO dodać id z google developers console-->
-    <string name="facebook_app_id">TUTAJ_APP_ID</string>
-    <string name="fb_login_protocol_scheme">fb_tutaj_app_id</string>
-    <string name="facebook_client_token">TUTAJ_CLIENT_TOKEN</string>
+    <string name="facebook_app_id">1893136888082129</string>
+    <string name="fb_login_protocol_scheme">fb1893136888082129</string>
+    <string name="facebook_client_token">5cb3ebcc821490556441a237897c662f</string>
 
 </resources>
