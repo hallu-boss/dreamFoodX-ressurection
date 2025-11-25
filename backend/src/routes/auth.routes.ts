@@ -1,5 +1,11 @@
 import express from 'express';
-import { register, login, getProfile } from '../controllers/auth.controller';
+import {
+  register,
+  login,
+  getProfile,
+  updateProfile,
+  updatePassword,
+} from '../controllers/auth.controller';
 import { authenticate } from '../middleware/authenticate';
 import { validateRegistration, validateLogin } from '../middleware/validators';
 import { googleAuth } from '../controllers/googleAuth.controller';
@@ -11,4 +17,7 @@ router.post('/login', validateLogin, login);
 router.get('/profile', authenticate, getProfile);
 router.post('/google', googleAuth);
 router.post('/facebook', facebookAuth);
+router.put('/profile', authenticate, updateProfile);
+router.put('/password', authenticate, updatePassword);
+
 export default router;

@@ -16,8 +16,8 @@ data class RecipeCover(
     val reviewsCount: Int,
     val cookingTime: String,
     val ingredientsCount: Int,
-    val isPurchased: Boolean? = null,
-    val isOwned: Boolean? = null
+    var isPurchased: Boolean, // czy dodano do ulubionych
+    val isOwned: Boolean
 )
 
 data class Author(
@@ -71,15 +71,16 @@ data class Review (
     val userId:   Int,
 )
 
+data class Comment (
+    val recipeId: Int,
+    val rating:   Int,
+    val opinion:  String,
+    val name: String,
+    val surname: String
+)
+
 data class ReviewRequest (
     val recipeId: Int,
     val userId:   Int,
-)
-
-data class ReviewResponse (
-    val recipeId: Int,
-    val userId:   Int,
-    val rating:   Int,
-    val opinion:  String,
 )
 

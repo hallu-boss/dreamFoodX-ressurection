@@ -16,7 +16,9 @@ class LoginViewModel : ViewModel() {
     var token by mutableStateOf<String?>(null)
     var errorMessage by mutableStateOf<String?>(null)
     var goggleToken by mutableStateOf<String?>(null)
-
+    var succesfulMessage by mutableStateOf<String?>(null)
+    var userProfile by mutableStateOf<UserProfile?>(null)
+    var isLoadedProfile by mutableStateOf(false)
     fun login(email: String, password: String) {
         viewModelScope.launch {
             try {
@@ -26,7 +28,7 @@ class LoginViewModel : ViewModel() {
                     token = body?.token
                     user = body?.user
                 } else {
-                    errorMessage = "Błąd logowania: ${response.code()}"
+                    errorMessage = "Błąd logowania: ${response.errorBody()?.toString()}"
                 }
             } catch (e: Exception) {
                 errorMessage = e.localizedMessage
@@ -57,6 +59,22 @@ class LoginViewModel : ViewModel() {
             }
         }
     }
+    fun downloadUserProfile() {
+        isLoadedProfile = false
+        viewModelScope.launch {
+            try {
+                val response = ApiClient.getApi(token ?: "").getProfile()
+                if (response.isSuccessful) {
+                    userProfile = response.body()
+                    isLoadedProfile = true
+                } else {
+                    errorMessage = "Błąd Pobrania danych użytkownika: ${response.errorBody()?.string()}"
+                }
+            } catch (e: Exception) {
+                errorMessage = e.localizedMessage
+            }
+        }
+    }
     fun loginWithFacebook(accessToken: String) {
         viewModelScope.launch {
             try {
@@ -68,10 +86,58 @@ class LoginViewModel : ViewModel() {
                     user = body?.user
                 } else {
                     errorMessage = "Błąd logowania Facebook: ${response.code()}"
+
+                       }
+            } catch (e: Exception) {
+                errorMessage = e.localizedMessage
+            }
+        }
+    }
+    fun updateProfile(name: String, surname: String, email: String, cookingHours: Float) {
+        val newUser = User(
+            id =  user!!.id,
+            name =  name,
+            surname = surname,
+            email = email ,
+            cookingHours = cookingHours
+        )
+
+        viewModelScope.launch {
+            try {
+                val response = ApiClient.getApi(token ?: "").updateProfile(newUser)
+                if (response.isSuccessful) {
+                    succesfulMessage = response.body()!!.message
+                    downloadUserProfile()
+                } else {
+                    errorMessage = "Błąd aktualizacji danych użytkownika: ${response.errorBody()?.string()}"
                 }
             } catch (e: Exception) {
                 errorMessage = e.localizedMessage
             }
         }
     }
+
+    var passwordChangeSuccess by mutableStateOf(false)
+    fun updatePassword(oldPassword: String, newPassword:String ) {
+        val newPassword = ChangePassword(oldPassword, newPassword)
+        viewModelScope.launch {
+            try {
+                val response = ApiClient.getApi(token ?: "").updatePassword(newPassword)
+                if (response.isSuccessful) {
+                    succesfulMessage = response.body()?.message
+                    passwordChangeSuccess = true
+                    errorMessage = null
+                } else {
+                    errorMessage = response.errorBody()?.string() ?: "Nieznany błąd (${response.code()})"
+                    passwordChangeSuccess = false
+                }
+            }
+            catch (e : Exception ) {
+                errorMessage = e.localizedMessage
+                passwordChangeSuccess = false
+            }
+        }
+    }
+
+
 }

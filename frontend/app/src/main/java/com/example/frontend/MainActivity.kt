@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
                     composable(Screen.Home.route) { HomeScreen(navController, loginViewModel = loginViewModel, cartViewModel, recipeView = recipeView ) }
                     composable(Screen.Profile.route) { ProfileScreen(navController, loginViewModel = loginViewModel) }
                     composable(Screen.Shopping.route ){ ShoppingBasketScreen(navController, loginViewModel, cartViewModel) }
-                    composable(Screen.Recipes.route) { RecipeScreen(navController) }
+                    composable(Screen.Recipes.route) { RecipeScreen(navController, loginViewModel, recipeView = recipeView) }
                     composable(Screen.Test.route) { TestScreen(navController, loginViewModel = loginViewModel) }
                     composable("recipeDetail/{recipeId}") { backStackEntry ->
                         val recipeId = backStackEntry.arguments?.getString("recipeId") ?: return@composable

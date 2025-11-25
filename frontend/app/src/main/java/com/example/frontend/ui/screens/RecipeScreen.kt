@@ -1,20 +1,69 @@
 package com.example.frontend.ui.screens
 
 
+import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.MainLayout
+import com.example.frontend.ui.components.FullSizeButton
+import com.example.frontend.ui.components.RecipeCard.RecipeCoverItem
+import com.example.frontend.ui.components.RecipeFilter
+import com.example.frontend.ui.service.CartViewModel
+import com.example.frontend.ui.service.LoginViewModel
+import com.example.frontend.ui.service.RecipeViewModel
 
 @Composable
-fun RecipeScreen(navController: NavHostController) {
+fun RecipeScreen(navController: NavHostController,
+                 loginViewModel: LoginViewModel,
+                 cartViewModel: CartViewModel = viewModel(),
+                 recipeView: RecipeViewModel
+) {
+    val context = LocalContext.current
     var selectedItem by remember { mutableStateOf("Moje przepisy") }
+    loginViewModel.downloadUserProfile()
+
+    recipeView.loadRecipes(loginViewModel.token ?: "")
+    cartViewModel.setToken(loginViewModel.token)
+    cartViewModel.getUserCart()
+
+    var recipes = recipeView.recipes
+    var filteredRecipes by remember { mutableStateOf(recipes) }
+
+    val tabs = listOf(
+        "Moje przepisy",
+        "Ulubione"
+    )
+    var selectedTabIndex by remember { mutableStateOf(0) }
+
+    var showAddButton by remember { mutableStateOf(false) }
+
+    LaunchedEffect(selectedTabIndex, loginViewModel.userProfile) {
+        filteredRecipes = recipes
+        showAddButton = (selectedTabIndex == 0)
+
+    }
+
+
 
     MainLayout(
         navController = navController,
@@ -27,8 +76,94 @@ fun RecipeScreen(navController: NavHostController) {
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text("To jest ekran strona przepisów ", fontSize = 40.sp)
+            Column (
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Dostępne przepisy ", fontSize = 40.sp)
+                Spacer(modifier = Modifier.height(25.dp))
+
+                RecipeFilter( recipes, onFiltered = { filteredRecipes = it })
+
+                if( showAddButton) {
+                    FullSizeButton(
+                        text = "Dodaj przepis",
+                        onClick = {  } // TODO
+                    )
+                }
+                
+                TabRow(selectedTabIndex = selectedTabIndex) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(
+                            selected = selectedTabIndex == index,
+                            onClick = { selectedTabIndex = index },
+                            text = { Text(title, fontSize = 22.sp) }
+                        )
+                    }
+                }
+
+                when {
+                    recipeView.isLoading -> {
+                        Box(modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    recipeView.errorMessage != null -> {
+                        Text(
+                            text = "Błąd: ${recipeView.errorMessage}",
+                            color = Color.Red
+                        )
+                    }
+                    else -> {
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(filteredRecipes) { recipe ->
+                                val isRecipeInCart = cartViewModel.cart?.items?.any { it.recipeId == recipe.id } == true
+                                var isRecipeTODisplay = false
+                                when (selectedTabIndex) {
+                                    0 -> {
+                                        isRecipeTODisplay = recipe.isOwned
+                                    }
+                                    1 -> {
+                                        isRecipeTODisplay = recipe.isPurchased
+                                    }
+                                }
+
+                                if( isRecipeTODisplay) {
+                                    RecipeCoverItem(
+                                        recipe = recipe,
+                                        isInCart = isRecipeInCart,
+                                        onAddToCart = { recipeId ->
+                                            cartViewModel.removeFromCart(recipeId)
+                                        },
+                                        onAddToColection = {
+                                                idRecipe -> recipeView.addOrRemoveFreeRecipeToUser(idRecipe, loginViewModel.token ?: "")
+
+                                            recipeView.loadRecipes(loginViewModel.token ?: "")
+                                            if( recipeView.responseMmessage != null)
+                                                Toast.makeText(context,  recipeView.responseMmessage, Toast.LENGTH_SHORT ).show()
+                                            if( recipeView.errorMessage != null)
+                                                Toast.makeText(context, recipeView.errorMessage, Toast.LENGTH_SHORT ).show()
+                                        },
+                                        onClick = { navController.navigate("recipeDetail/${recipe.id}") },
+                                        displayBuyButton = false
+                                    )
+                                }
+
+
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
+
 
 }

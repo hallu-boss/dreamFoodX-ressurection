@@ -32,7 +32,7 @@ fun TestScreen(navController: NavHostController,
     val user = loginViewModel.user
     val token = loginViewModel.token
     var recipeView : RecipeViewModel = viewModel ();
-    recipeView.loadRecipes();
+    recipeView.loadRecipes(loginViewModel.token ?: "");
 
     MainLayout(
         navController = navController,
