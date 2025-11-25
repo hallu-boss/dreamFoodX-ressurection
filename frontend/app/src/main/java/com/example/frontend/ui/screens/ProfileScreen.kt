@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -48,7 +47,7 @@ fun ProfileScreen(navController: NavHostController,
     var showDialog by remember { mutableStateOf(false) }
     var showPasswordDialog by remember { mutableStateOf(false) }
 
-    if (!loginViewModel.isLoggedIn()) {
+    if (!userViewModel.isLoggedIn()) {
         navController.navigate("login")
     }
     MainLayout(
@@ -68,7 +67,7 @@ fun ProfileScreen(navController: NavHostController,
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 Text("To jest ekran profilu ", fontSize = 40.sp)
-                Button(onClick = { loginViewModel.logout() }) {
+                Button(onClick = { userViewModel.logout() }) {
                     Text("Wyloguj się")
                 }
             }
