@@ -51,7 +51,7 @@ export const googleAuth = async (
           email,
           password: '', // Google nie daje hasła
           cookingHours: 0,
-          googleId, // 🔥 Dodaj to pole w bazie jeśli go nie masz!
+          googleId,
           avatarUrl: picture,
         },
       });

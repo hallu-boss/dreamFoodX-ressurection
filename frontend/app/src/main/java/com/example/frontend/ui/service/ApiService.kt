@@ -32,7 +32,7 @@ interface ApiService {
     @POST("auth/google")
     suspend fun loginGoogle(@Body body: GoogleLoginRequest): Response<LoginResponse>
 
-    @POST("auth/facebook") // Endpoint, który stworzymy w Node.js
+    @POST("auth/facebook")
     suspend fun loginFacebook(@Body request: FacebookLoginRequest): Response<LoginResponse>
 
     @GET("recipe/covers")
@@ -59,8 +59,6 @@ interface ApiService {
         @Query("userId") userId: Int
     ): Response<ReviewResponse>
 
-
-
     @GET("cart")
     suspend fun getCart() : Response<Cart>
 
@@ -70,7 +68,6 @@ interface ApiService {
 
     @POST("cart/add")
     suspend fun addToCart(@Body recipeId: AddToCartRequest) : Response<MessageResponse>
-
 
     @DELETE("cart/remove/{recipeId}")
     suspend fun deleteFromCart(

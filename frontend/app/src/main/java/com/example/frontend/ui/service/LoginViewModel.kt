@@ -60,7 +60,6 @@ class LoginViewModel : ViewModel() {
     fun loginWithFacebook(accessToken: String) {
         viewModelScope.launch {
             try {
-                // Zakładam, że stworzysz klasę FacebookLoginRequest podobną do GoogleLoginRequest
                 val response = ApiClient.api.loginFacebook(FacebookLoginRequest(accessToken))
 
                 if (response.isSuccessful) {

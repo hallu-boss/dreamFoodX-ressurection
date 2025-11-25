@@ -20,8 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    // 1. Tworzymy CallbackManager jako pole w klasie
     private val callbackManager = CallbackManager.Factory.create()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,9 +28,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             val recipeView : RecipeViewModel = viewModel()
             val loginViewModel: LoginViewModel = viewModel()
-
-            // To wywołanie logowania przy starcie jest pewnie do testów, ale OK:
-            loginViewModel.login("john.doe@example.com", "password123")
+            // Testowy użytkownik
+            // loginViewModel.login("john.doe@example.com", "password123")
 
             DreamFoodAppTheme {
                 val navController: NavHostController = rememberNavController()
@@ -40,16 +37,14 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Screen.Home.route // Zmień na Screen.Login jeśli chcesz testować logowanie od razu
+                    startDestination = Screen.Home.route
                 ) {
                     composable(Screen.Register.route) { RegisterScreen(navController) }
-
-                    // 2. Przekazujemy callbackManager do LoginScreen
                     composable(Screen.Login.route) {
                         LoginScreen(
                             navController = navController,
                             viewModel = loginViewModel,
-                            callbackManager = callbackManager // <--- PRZEKAZANIE
+                            callbackManager = callbackManager
                         )
                     }
 
@@ -67,9 +62,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // 3. Kluczowy element: Przekazanie wyniku z Activity do SDK Facebooka
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        // Najpierw niech Facebook sprawdzi, czy to jego wynik
         callbackManager.onActivityResult(requestCode, resultCode, data)
         super.onActivityResult(requestCode, resultCode, data)
     }

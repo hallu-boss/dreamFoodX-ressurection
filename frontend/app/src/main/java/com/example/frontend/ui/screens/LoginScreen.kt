@@ -39,9 +39,6 @@ import com.google.android.gms.common.api.ApiException
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 
-import com.facebook.FacebookSdk
-import com.facebook.appevents.AppEventsLogger
-
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -71,17 +68,15 @@ fun LoginScreen(navController: NavHostController,
     // Funkcja do uruchomienia logowania FB
     val loginWithFacebook = {
         LoginManager.getInstance().logInWithReadPermissions(
-            context as Activity, // Rzutowanie na Activity jest wymagane przez SDK
+            context as Activity,
             listOf("email", "public_profile")
         )
     }
 
-    // Rejestracja Callbacka (nasłuchiwanie wyniku)
     DisposableEffect(Unit) {
         val loginManager = LoginManager.getInstance()
         loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(result: LoginResult) {
-                // Mamy token z Facebooka! Wysyłamy go do naszego backendu
                 Log.d("FB_LOGIN", "Token: ${result.accessToken.token}")
                 viewModel.loginWithFacebook(result.accessToken.token)
             }
@@ -103,7 +98,7 @@ fun LoginScreen(navController: NavHostController,
 
 
 
-
+    // Konfiguracja Google Sign-In
     val gso = remember {
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(googleClientId)
@@ -204,14 +199,14 @@ fun LoginScreen(navController: NavHostController,
             Row (modifier = Modifier.fillMaxWidth().padding(40.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly) {
 
-                LoginBySocialmedia(id = R.drawable.logo_fb,
+                LoginBySocialmedia(id = R.drawable.logo_google,
                     contentDescription = "Google",
                     onClick = {
                         googleSignInLauncher.launch(googleSignInClient.signInIntent)
                     })
 
-                LoginBySocialmedia(id = R.drawable.logo_inst,
-                    contentDescription = "Instagram",
+                LoginBySocialmedia(id = R.drawable.logo_fb,
+                    contentDescription = "Facebook",
                     onClick = {loginWithFacebook()})
             }
 

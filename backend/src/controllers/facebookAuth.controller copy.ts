@@ -11,7 +11,7 @@ export const facebookAuth = async (
   next: NextFunction
 ) => {
   try {
-    // Oczekujemy accessToken, który dostałeś w Androidzie (LoginResult.accessToken.token)
+    // Oczekujemy accessToken, który dostałeś w Androidzie po zalogowaniu się przez Facebook SDK
     const { accessToken } = req.body;
 
     if (!accessToken) {
@@ -54,9 +54,9 @@ export const facebookAuth = async (
           name: first_name || '',
           surname: last_name || '',
           email: email,
-          password: '', // Hasło puste dla kont social
+          password: '',
           cookingHours: 0,
-          facebookId: id, // 🔥 Dodaj to pole w schema.prisma i zrób migrację!
+          facebookId: id,
           avatarUrl: picture,
         },
       });
