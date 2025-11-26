@@ -42,7 +42,9 @@ fun HomeScreen(navController: NavHostController,
     val context = LocalContext.current
     val recipes = recipeView.recipes
     var filteredRecipes by remember { mutableStateOf(recipes) }
-
+    if (!loginViewModel.isLoggedIn()) {
+        navController.navigate("login")
+    }
     MainLayout(
         navController = navController,
         selectedItem = selectedItem,

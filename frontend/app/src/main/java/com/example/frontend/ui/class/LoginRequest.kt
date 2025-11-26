@@ -10,3 +10,9 @@ data class LoginResponse(
     val user: User
 )
 
+data class GoogleLoginRequest(
+    val idToken: String
+)
+data class FacebookLoginRequest(
+    val accessToken: String
+)

@@ -1,6 +1,6 @@
 package com.example.frontend.ui.screens
 
-
+import android.app.Activity
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,11 +33,26 @@ import com.example.frontend.ui.components.LoginBySocialmedia
 import com.example.frontend.ui.components.PasswordInputField
 import com.example.frontend.ui.components.validateEmail
 import com.example.frontend.ui.service.LoginViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+import androidx.compose.runtime.DisposableEffect
+import android.util.Log
 
 
+private const val TAG = "GoogleSignInDebug"
 @Composable
 fun LoginScreen(navController: NavHostController,
                 viewModel: LoginViewModel = viewModel(),
+                callbackManager: CallbackManager
                 ) {
     var email by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
@@ -45,6 +60,75 @@ fun LoginScreen(navController: NavHostController,
     val user = viewModel.user
     val errorMessage = viewModel.errorMessage
     val context = LocalContext.current
+    val googleClientId = context.getString(R.string.default_web_client_id)
+
+
+
+
+    // Funkcja do uruchomienia logowania FB
+    val loginWithFacebook = {
+        LoginManager.getInstance().logInWithReadPermissions(
+            context as Activity,
+            listOf("email", "public_profile")
+        )
+    }
+
+    DisposableEffect(Unit) {
+        val loginManager = LoginManager.getInstance()
+        loginManager.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onSuccess(result: LoginResult) {
+                Log.d("FB_LOGIN", "Token: ${result.accessToken.token}")
+                viewModel.loginWithFacebook(result.accessToken.token)
+            }
+
+            override fun onCancel() {
+                Log.d("FB_LOGIN", "Anulowano logowanie")
+            }
+
+            override fun onError(error: FacebookException) {
+                Log.e("FB_LOGIN", "Błąd: ${error.message}")
+                Toast.makeText(context, "Błąd FB: ${error.message}", Toast.LENGTH_LONG).show()
+            }
+        })
+
+        onDispose {
+            loginManager.unregisterCallback(callbackManager)
+        }
+    }
+
+
+
+    // Konfiguracja Google Sign-In
+    val gso = remember {
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(googleClientId)
+            .requestEmail()
+            .build()
+    }
+    val googleSignInClient = remember { GoogleSignIn.getClient(context, gso) }
+
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val idToken = account.idToken
+            Log.d(TAG, "ID Token (do Back-endu): $idToken")
+
+            if (idToken != null) {
+                viewModel.loginWithGoogle(idToken)
+            } else {
+                Toast.makeText(context, "Brak tokena Google. Sprawdź konfigurację Web Client ID w GCP.", Toast.LENGTH_LONG).show()
+                Log.e(TAG, "Błąd konfiguracji: Uzyskano konto, ale brak tokena ID.")
+            }
+        } catch (e: ApiException) {
+            val errorMessage = "Logowanie Google nie powiodło się: ${e.statusCode}"
+            Log.e(TAG, errorMessage)
+            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+        }
+    }
 
 
     Box(
@@ -92,14 +176,17 @@ fun LoginScreen(navController: NavHostController,
                 text = "Zaloguj się",
                 onClick = {
                     if (email.isEmpty() || password.isEmpty()) {
-                        val context = null
                         Toast.makeText(context, "Wypełnij wszystkie pola", Toast.LENGTH_LONG).show()
                     } else {
                         viewModel.login(email, password)
                     }
                 }
             )
-
+            errorMessage?.let { error ->
+                LaunchedEffect(error) {
+                    Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+                }
+            }
             Spacer(modifier = Modifier.height(16.dp))
             FullSizeButton(
                 text = "Zarejestruj się",
@@ -112,13 +199,15 @@ fun LoginScreen(navController: NavHostController,
             Row (modifier = Modifier.fillMaxWidth().padding(40.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly) {
 
+                LoginBySocialmedia(id = R.drawable.logo_google,
+                    contentDescription = "Google",
+                    onClick = {
+                        googleSignInLauncher.launch(googleSignInClient.signInIntent)
+                    })
+
                 LoginBySocialmedia(id = R.drawable.logo_fb,
                     contentDescription = "Facebook",
-                    onClick = {/* TODO obsługa logowanie facebook */})
-
-                LoginBySocialmedia(id = R.drawable.logo_inst,
-                    contentDescription = "Instagram",
-                    onClick = {/* TODO obsługa logowanie instagram */})
+                    onClick = {loginWithFacebook()})
             }
 
 

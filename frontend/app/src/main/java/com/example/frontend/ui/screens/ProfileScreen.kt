@@ -1,17 +1,22 @@
 package com.example.frontend.ui.screens
 
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -42,6 +47,9 @@ fun ProfileScreen(navController: NavHostController,
     var showDialog by remember { mutableStateOf(false) }
     var showPasswordDialog by remember { mutableStateOf(false) }
 
+    if (!userViewModel.isLoggedIn()) {
+        navController.navigate("login")
+    }
     MainLayout(
         navController = navController,
         selectedItem = selectedItem,
@@ -54,6 +62,16 @@ fun ProfileScreen(navController: NavHostController,
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                Text("To jest ekran profilu ", fontSize = 40.sp)
+                Button(onClick = { userViewModel.logout() }) {
+                    Text("Wyloguj się")
+                }
+            }
+            
             if( userProfile != null) {
                 UniversalEditCard(
                     data = {

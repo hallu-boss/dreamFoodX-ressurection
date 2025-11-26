@@ -1,5 +1,7 @@
 package com.example.frontend.ui.service
 
+import FacebookLoginRequest
+import GoogleLoginRequest
 import Comment
 import LoginRequest
 import LoginResponse
@@ -29,6 +31,11 @@ interface ApiService {
     @POST("auth/login")
     suspend fun login(@Body body: LoginRequest): Response<LoginResponse>
 
+    @POST("auth/google")
+    suspend fun loginGoogle(@Body body: GoogleLoginRequest): Response<LoginResponse>
+
+    @POST("auth/facebook")
+    suspend fun loginFacebook(@Body request: FacebookLoginRequest): Response<LoginResponse>
     @GET("auth/profile")
     suspend fun getProfile() : Response<UserProfile>
 
@@ -79,7 +86,6 @@ interface ApiService {
 
     @POST("cart/add")
     suspend fun addToCart(@Body recipeId: AddToCartRequest) : Response<MessageResponse>
-
 
     @DELETE("cart/remove/{recipeId}")
     suspend fun deleteFromCart(

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">DreamFood</string>
+    <!--  Wstawić tutaj wartości z pliku env -->
+    <string name="default_web_client_id">330956432900-1u2tum9bpr8s1adp4mc9etgan6bnb331.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">1893136888082129</string>
+    <string name="fb_login_protocol_scheme">fb1893136888082129</string>
+    <string name="facebook_client_token">FACEBOOK_APP_SECRET</string>
+
 </resources>
