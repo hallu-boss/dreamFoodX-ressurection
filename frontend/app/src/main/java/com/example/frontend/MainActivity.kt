@@ -30,6 +30,8 @@ class MainActivity : ComponentActivity() {
             val loginViewModel: LoginViewModel = viewModel()
             // Testowy użytkownik
             // loginViewModel.login("john.doe@example.com", "password123")
+            // loginViewModel.login("testUser@testUser.testUser", "testUser")
+
 
             DreamFoodAppTheme {
                 val navController: NavHostController = rememberNavController()
