@@ -299,8 +299,6 @@ fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit , r
                     yourStars = userRating,
                     yourOpinion = recipeViewModel.userRatingOpinion ,
                     onRatingChanged = { newRating, userOpinion ->
-                        {
-                            userRating = newRating
                             val newReview = Review(
                                 recipeId = recipeDetail.id,
                                 rating = newRating,
@@ -312,7 +310,7 @@ fun RecipeDetailContent(recipeDetail: RecipeResponse?, onDismiss: () -> Unit , r
                                     ?: ""
                             )
                             recipeViewModel.userRatingOpinion = userOpinion
-                        }
+                            userRating = newRating
                 } )
                 Spacer(modifier = Modifier.height(10.dp))
             }

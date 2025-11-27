@@ -34,16 +34,16 @@ fun StarRating( totalStars: Int = 5,
                 modifier: Modifier = Modifier,
                 yourStars: Int = 0,
                 yourOpinion: String,
-                onRatingChanged: ((Int, String) -> Unit)? = null ) {
+                onRatingChanged: ((Int, String) -> Unit)  ) {
     Column (
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(20.dp))
             .background(Color.DarkGray),
         horizontalAlignment = Alignment.CenterHorizontally
     )
     {
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = modifier.height(5.dp))
         Text(
             text = "Twoja ocena przepisu ${yourStars}",
             color = Color.White,
@@ -75,7 +75,7 @@ fun StarRating( totalStars: Int = 5,
                         .padding(4.dp)
                         .clickable {
                             rating = i
-                            onRatingChanged?.invoke(i, opinion)
+                            onRatingChanged.invoke(i, opinion)
                         }
                 )
             }
