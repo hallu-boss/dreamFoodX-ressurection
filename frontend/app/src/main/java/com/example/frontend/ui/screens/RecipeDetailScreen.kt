@@ -238,12 +238,12 @@ fun SimpleRewiev(review: Comment) {
         modifier = Modifier
             .fillMaxWidth().padding(15.dp)
             .clip(shape = RoundedCornerShape(20.dp))
-            .background(Color.DarkGray).padding(5.dp, 2.dp),
+            .background(Color.DarkGray)
+            .padding(15.dp, 12.dp),
     )
     {
-        Spacer(modifier = Modifier.height(5.dp))
-
-        Row {
+        Row (Modifier.fillMaxWidth().padding(5.dp)
+        ){
             var rating by remember {
                 mutableStateOf(review.rating) }
             for (i in 1..review.rating) {
@@ -258,11 +258,13 @@ fun SimpleRewiev(review: Comment) {
                         .padding(4.dp)
                 )
             }
-            Text(" by ${review.name} ${review.surname}")
+            Box(Modifier.weight(1f) ) { } // Przestrzeń między ilosćią awiazdek a autorem
+            Text("${review.name} ${review.surname}", fontWeight = FontWeight.Bold)
         }
-
+        Spacer(Modifier.height(9.dp))
         if( !review.opinion.trim().equals("")) {
-            Text(review.opinion)
+
+            Text(review.opinion, fontSize = 22.sp)
         }
     }
 
