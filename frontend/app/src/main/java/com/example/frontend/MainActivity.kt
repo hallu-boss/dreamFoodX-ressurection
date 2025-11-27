@@ -29,8 +29,8 @@ class MainActivity : ComponentActivity() {
             val recipeView : RecipeViewModel = viewModel()
             val loginViewModel: LoginViewModel = viewModel()
             // Testowy użytkownik
-            // loginViewModel.login("john.doe@example.com", "password123")
-            // loginViewModel.login("testUser@testUser.testUser", "testUser")
+//             loginViewModel.login("john.doe@example.com", "password123")
+             loginViewModel.login("testUser@testUser.testUser", "testUser")
 
 
             DreamFoodAppTheme {
