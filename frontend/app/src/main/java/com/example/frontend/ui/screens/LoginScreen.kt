@@ -207,7 +207,10 @@ fun LoginScreen(navController: NavHostController,
 
                 LoginBySocialmedia(id = R.drawable.logo_fb,
                     contentDescription = "Facebook",
-                    onClick = {loginWithFacebook()})
+                    onClick = {
+                        loginWithFacebook()
+                    }
+                )
             }
 
 
