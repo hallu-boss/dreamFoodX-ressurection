@@ -3,6 +3,7 @@ package com.example.frontend.ui.screens
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -48,6 +49,7 @@ fun NewRecipeScreen(navController: NavHostController,
             newRecipeViewModel : NewRecipeViewModel = viewModel()
 ) {
     var selectedItem by remember { mutableStateOf("Strona główna") }
+    val context = LocalContext.current
 
     val tabs = listOf(
         "Informacje",
@@ -99,7 +101,15 @@ fun NewRecipeScreen(navController: NavHostController,
             Box (Modifier.weight(1f)) {
                 FullSizeButton("Zapisz przepis",
                 onClick = {
-                    TODO()
+                    var isError = false
+                    if( !newRecipeViewModel.validateBasicInformation() ) {
+                        isError = true
+                        Toast.makeText(context, "Należy wypełnić: Nazwę, kategorię oraz dodać obraz", Toast.LENGTH_LONG).show()
+                    }
+
+                    if( !isError) {
+                        TODO()
+                    }
                 })}
         }
     }
