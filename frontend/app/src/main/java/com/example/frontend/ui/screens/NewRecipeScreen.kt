@@ -9,6 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -114,23 +115,47 @@ fun newRecipeInformationTab(newRecipeViewModel: NewRecipeViewModel) {
     ) { uri ->
         newRecipeViewModel.obraz = uri
     }
-
+    Text("Nazwa przepisu", fontSize = 20.sp)
     InputField(
         label = "Nazwa",
         value = newRecipeViewModel.nazwa,
         onValueChange = { newRecipeViewModel.nazwa = it }
     )
     Spacer(Modifier.height(15.dp))
-
+    Text("Wybierz kategorię", fontSize = 20.sp)
     SelectBox(
         options = newRecipeViewModel.categories,
         selectedOption = newRecipeViewModel.kategoria,
         onOptionSelected = { newRecipeViewModel.kategoria = it },
         label = "Wybierz kategorię"
     )
+
+    Spacer(Modifier.height(15.dp))
+    Text("Czy chcesz by przepis był widoczny dla innych?", fontSize = 20.sp)
+    Row(Modifier.fillMaxWidth()) {
+        Button(
+            modifier = Modifier.weight(2f),
+            onClick = {newRecipeViewModel.czyPubliczny = !newRecipeViewModel.czyPubliczny}
+        ) {
+            Text(if (newRecipeViewModel.czyPubliczny)  "Publiczny" else "Prywatny" )
+        }
+        if( newRecipeViewModel.czyPubliczny) {
+            Box(modifier = Modifier.weight(1f))
+            InputField(
+                label = "Cena",
+                value = newRecipeViewModel.cena.toString(),
+                onValueChange = {newRecipeViewModel.cena = it.toFloat()},
+                modifier = Modifier.weight(4f)
+
+            )
+        }
+
+
+    }
+
     Spacer(Modifier.height(15.dp))
 
-    Button(onClick = { pickImage.launch("image/*") }) {
+    Button(onClick = { pickImage.launch("image/*") }, modifier = Modifier.fillMaxWidth()) {
         Text("Wybierz obraz")
     }
 
