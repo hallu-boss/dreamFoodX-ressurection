@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,70 +19,127 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.MainLayout
+import com.example.frontend.ui.components.FullSizeButton
 import com.example.frontend.ui.service.LoginViewModel
-import com.example.frontend.ui.service.RecipeViewModel
+import com.example.frontend.ui.service.NewRecipeViewModel
 
 @Composable
 fun NewRecipeScreen(navController: NavHostController,
                loginViewModel: LoginViewModel = viewModel()
 ) {
+    val newRecipeViewModel : NewRecipeViewModel = viewModel()
     var selectedItem by remember { mutableStateOf("Strona główna") }
-    val user = loginViewModel.user
-    val token = loginViewModel.token
-    var recipeView : RecipeViewModel = viewModel ();
-    recipeView.loadRecipes(loginViewModel.token ?: "");
+
+    val tabs = listOf(
+        "Informacje",
+        "Składniki",
+        "Kroki przepisu"
+    )
+    var selectedTabIndex by remember { mutableStateOf(0) }
 
     MainLayout(
         navController = navController,
         selectedItem = selectedItem,
         onItemSelected = { selectedItem = it }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
+        Column (
+            modifier = Modifier.padding(innerPadding).fillMaxSize(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column (
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Dostępne przeisy ", fontSize = 40.sp)
-                Spacer(modifier = Modifier.height(35.dp))
-                Text("Witaj, ${user?.name} ${user?.surname}", fontSize = 24.sp)
-                Spacer(modifier = Modifier.height(25.dp))
-
-                when {
-                    recipeView.isLoading -> {
-                        Text("Ładowanie przepisów...")
-                    }
-
-                    recipeView.errorMessage != null -> {
-                        Text(
-                            text = "Błąd: ${recipeView.errorMessage}",
-                            color = androidx.compose.ui.graphics.Color.Red
-                        )
-                    }
-
-                    else -> {
-                        LazyColumn(
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            items(recipeView.recipes) { recipe ->
-
-                            }
-                        }
-                    }
+            Text("Dodaj nowy przepis", fontWeight = FontWeight.Bold, fontSize = 35.sp)
+            Spacer(Modifier.height(10.dp))
+            TabRow(selectedTabIndex = selectedTabIndex) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { selectedTabIndex = index },
+                        text = { Text(title, fontSize = 22.sp) }
+                    )
                 }
             }
+
+            Column (Modifier
+                .verticalScroll(rememberScrollState())
+                .weight(12f)
+            ) {
+                Text("Nowy przeisy ", fontSize = 40.sp)
+                when (selectedTabIndex) {
+                    0 -> {
+                        newRecipeInformationTab()
+                    }
+                    1 -> {
+                        newRecipeIgredientsTab()
+                    }
+                    2 -> {
+                        newRecipeStepsTab ()
+                    }
+                }
+                Spacer(Modifier.height(5.dp))
+            }
+            Box (Modifier.weight(1f)) {
+                FullSizeButton("Zapisz przepis",
+                onClick = {
+                    TODO()
+                })}
         }
     }
 
+}
+
+@Composable
+fun newRecipeInformationTab () {
+    Text("newRecipeInformationTab")
+    Text("newRecipeInformationTab")
+}
+
+@Composable
+fun newRecipeIgredientsTab () {
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Spacer(Modifier.height(20.dp))
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Spacer(Modifier.height(20.dp))
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+    Spacer(Modifier.height(20.dp))
+    Text("newRecipeIgredientsTab")
+    Text("newRecipeIgredientsTab")
+
+
+}
+
+@Composable
+fun newRecipeStepsTab () {
+    Text("newRecipeStepsTab")
+    Text("newRecipeStepsTab")
 }
