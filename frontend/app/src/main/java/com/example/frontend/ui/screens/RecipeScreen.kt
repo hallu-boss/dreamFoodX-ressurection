@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.MainLayout
+import com.example.firstcomposeap.ui.navigation.main.Screen
 import com.example.frontend.ui.components.FullSizeButton
 import com.example.frontend.ui.components.RecipeCard.RecipeCoverItem
 import com.example.frontend.ui.components.RecipeFilter
@@ -90,7 +91,7 @@ fun RecipeScreen(navController: NavHostController,
                 if( showAddButton) {
                     FullSizeButton(
                         text = "Dodaj przepis",
-                        onClick = {  } // TODO
+                        onClick = { navController.navigate(Screen.NewRecipe.route) }
                     )
                 }
                 
