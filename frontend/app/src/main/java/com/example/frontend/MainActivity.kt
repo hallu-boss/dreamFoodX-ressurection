@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
             val loginViewModel: LoginViewModel = viewModel()
             // Testowy użytkownik
 //             loginViewModel.login("john.doe@example.com", "password123")
-             loginViewModel.login("testUser@testUser.testUser", "testUser")
+             loginViewModel.login("michalkaniewski1997@gmail.com", "michalkaniewski1997@gmail.com")
 
 
             DreamFoodAppTheme {
