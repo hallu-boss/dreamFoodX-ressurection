@@ -36,11 +36,10 @@ data class ChangePassword(
 @Serializable
 data class Ingredient(
     val id: Int,
-    val title: String,
-    val unit: String,
-    val category: String,
-    val ownerId: Int? = null,
-    val steps: List<RecipeStep> = emptyList()
+    var title: String,
+    var unit: String,
+    var category: String,
+    val ownerId: Int? = null
 )
 
 @Serializable
