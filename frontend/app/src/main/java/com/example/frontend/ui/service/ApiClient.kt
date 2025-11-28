@@ -10,7 +10,7 @@ object ApiClient {
     // IP danego komputera w scieci lokalnej  Należy zmienic też w network_security_config
 
     // 10.0.2.2 to adres hosta komputera gdzie działa emulator
-    private const val BASE_URL = " https://contrate-liza-superingenious.ngrok-free.dev/api/"//"http://10.0.2.2:5000/api/"
+    private const val BASE_URL = "https://contrate-liza-superingenious.ngrok-free.dev/api/"//"http://10.0.2.2:5000/api/"
 
     // Przy lgowaniu się z innej sieci używać z ngroka (przy logowaniu przez googla lub faceboka jest to konieczne)
     // ngrok http 5000
