@@ -32,6 +32,7 @@ fun stepDetail(step: RecipeStep, index: Int) {
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(20.dp))
             .background(Color.DarkGray)
+            .padding(10.dp, 12.dp)
     )
     {
         Row (modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),

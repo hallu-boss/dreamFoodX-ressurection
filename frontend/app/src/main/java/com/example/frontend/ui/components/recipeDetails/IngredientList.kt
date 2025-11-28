@@ -31,6 +31,7 @@ fun IngredientList(steps: List<RecipeStep>?) {
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(20.dp))
             .background(Color.DarkGray)
+            .padding(10.dp, 12.dp)
     )
     {
         Spacer(modifier = Modifier.height(5.dp))

@@ -63,7 +63,7 @@ fun HomeScreen(navController: NavHostController,
             ) {
                 Text("Dostępne przepisy ", fontSize = 40.sp)
                 Spacer(modifier = Modifier.height(25.dp))
-                Text("Witaj, ${user?.name} ${user?.surname} - ${user?.id}", fontSize = 24.sp)
+                Text("Witaj, ${user?.name} ${user?.surname}", fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(20.dp))
 
                 RecipeFilter( recipes, onFiltered = { filteredRecipes = it })

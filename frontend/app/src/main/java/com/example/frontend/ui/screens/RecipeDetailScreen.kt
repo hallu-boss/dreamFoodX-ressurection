@@ -160,19 +160,16 @@ fun RecipeTab( recipeId: String,
     }
     Box(
         modifier = Modifier
-            .padding(8.dp)
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
             Box(modifier = Modifier
-                .padding(10.dp)
                 .fillMaxSize()) {
                 when {
                     isLoading -> CircularProgressIndicator(
@@ -236,7 +233,7 @@ fun ReviewTab(viewModel: RecipeViewModel) {
 fun SimpleRewiev(review: Comment) {
     Column (
         modifier = Modifier
-            .fillMaxWidth().padding(15.dp)
+            .fillMaxWidth().padding(5.dp)
             .clip(shape = RoundedCornerShape(20.dp))
             .background(Color.DarkGray)
             .padding(15.dp, 12.dp),
