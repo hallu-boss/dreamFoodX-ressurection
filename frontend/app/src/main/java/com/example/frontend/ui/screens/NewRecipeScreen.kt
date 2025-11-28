@@ -132,6 +132,7 @@ fun newRecipeInformationTab(newRecipeViewModel: NewRecipeViewModel) {
 
     Spacer(Modifier.height(15.dp))
     Text("Czy chcesz by przepis był widoczny dla innych?", fontSize = 20.sp)
+    var price by remember { mutableStateOf(newRecipeViewModel.cena.toString()) }
     Row(Modifier.fillMaxWidth()) {
         Button(
             modifier = Modifier.weight(2f),
@@ -142,9 +143,13 @@ fun newRecipeInformationTab(newRecipeViewModel: NewRecipeViewModel) {
         if( newRecipeViewModel.czyPubliczny) {
             Box(modifier = Modifier.weight(1f))
             InputField(
-                label = "Cena",
-                value = newRecipeViewModel.cena.toString(),
-                onValueChange = {newRecipeViewModel.cena = it.toFloat()},
+                label = "Cena (PLN)",
+                value = price,
+                onValueChange = {
+                    price = it
+                    if( price != "")
+                        newRecipeViewModel.cena = price.toFloat()
+                                },
                 modifier = Modifier.weight(4f)
 
             )
@@ -154,7 +159,7 @@ fun newRecipeInformationTab(newRecipeViewModel: NewRecipeViewModel) {
     }
 
     Spacer(Modifier.height(15.dp))
-
+    Text("Wybierz grafikę by zachęcić użytkowników", fontSize = 20.sp)
     Button(onClick = { pickImage.launch("image/*") }, modifier = Modifier.fillMaxWidth()) {
         Text("Wybierz obraz")
     }
