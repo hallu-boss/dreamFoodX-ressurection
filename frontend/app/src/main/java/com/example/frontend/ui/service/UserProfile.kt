@@ -49,6 +49,17 @@ class Ingredient (
     var category by mutableStateOf(category)
 }
 
+data class Step(
+    val title: String,
+    val stepType: StepType,
+    val ingredientId: Int? = null,
+    val amount: Double? = null,
+    val time: String? = null,
+    val temperature: Int? = null,
+    val mixSpeed: Int? = null,
+    val description: String? = null
+)
+
 @Serializable
 data class RecipeStep(
     val id: Int,
