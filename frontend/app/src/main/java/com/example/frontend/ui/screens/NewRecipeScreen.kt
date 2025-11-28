@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Tab
@@ -29,6 +31,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +44,7 @@ import com.example.firstcomposeap.ui.navigation.main.MainLayout
 import com.example.frontend.ui.components.FullSizeButton
 import com.example.frontend.ui.components.InputField
 import com.example.frontend.ui.components.SelectBox
+import com.example.frontend.ui.service.Ingredient
 import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.service.NewRecipeViewModel
 
@@ -57,6 +62,40 @@ fun NewRecipeScreen(navController: NavHostController,
         "Kroki przepisu"
     )
     var selectedTabIndex by remember { mutableStateOf(0) }
+
+    newRecipeViewModel.userIngredientsList.addAll(
+        listOf(
+            Ingredient(
+                title = "Ziemniaki",
+                unit = "g",
+                category = "Warzywa",
+                id = 1,
+                ownerId = 11
+            ),
+            Ingredient(
+                title = "Jogurt grecki",
+                unit = "g",
+                category = "Nabiał",
+                id = 1,
+                ownerId = 11
+            ),
+            Ingredient(
+                title = "Ogórek",
+                unit = "szt",
+                category = "Warzywa",
+                id = 1,
+                ownerId = 19
+            ),
+            Ingredient(
+                title = "Spaghetti",
+                unit = "g",
+                category = "Produkty zbożowe",
+                id = 1,
+                ownerId = 11
+            )
+        )
+    )
+
 
     MainLayout(
         navController = navController,
@@ -90,7 +129,7 @@ fun NewRecipeScreen(navController: NavHostController,
                         newRecipeInformationTab(newRecipeViewModel = newRecipeViewModel)
                     }
                     1 -> {
-                        newRecipeIgredientsTab(newRecipeViewModel = newRecipeViewModel)
+                        newRecipeIgredientsTab(newRecipeViewModel = newRecipeViewModel, loginViewModel.user!!.id)
                     }
                     2 -> {
                         newRecipeStepsTab (newRecipeViewModel = newRecipeViewModel)
@@ -206,42 +245,38 @@ fun newRecipeInformationTab(newRecipeViewModel: NewRecipeViewModel) {
 
 
 @Composable
-fun newRecipeIgredientsTab (newRecipeViewModel : NewRecipeViewModel) {
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Spacer(Modifier.height(20.dp))
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Spacer(Modifier.height(20.dp))
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
-    Spacer(Modifier.height(20.dp))
-    Text("newRecipeIgredientsTab")
-    Text("newRecipeIgredientsTab")
+fun newRecipeIgredientsTab (newRecipeViewModel : NewRecipeViewModel, userId: Int) {
+    Text("Twoje składniki", fontSize = 20.sp)
 
+    newRecipeViewModel.userIngredientsList.forEach  {
+        skladnik -> IngredientCart(skladnik, userId)
+    }
 
+}
+
+@Composable
+fun IngredientEditCart(ingredient: Ingredient) {
+
+}
+
+@Composable
+fun IngredientCart(ingredient: Ingredient, userId: Int) {
+    if( userId != ingredient.ownerId)
+        return
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clip(shape = RoundedCornerShape(20.dp))
+            .background(Color.DarkGray)
+            .padding(10.dp, 4.dp)
+
+    ) {
+        Text("${ingredient.title}", modifier = Modifier.weight(3f))
+        Text("${ingredient.category}", modifier = Modifier.weight(2.2f))
+        Text("${ingredient.unit}", modifier = Modifier.weight(1f))
+    }
 }
 
 @Composable
@@ -249,3 +284,4 @@ fun newRecipeStepsTab (newRecipeViewModel : NewRecipeViewModel) {
     Text("newRecipeStepsTab")
     Text("newRecipeStepsTab")
 }
+
