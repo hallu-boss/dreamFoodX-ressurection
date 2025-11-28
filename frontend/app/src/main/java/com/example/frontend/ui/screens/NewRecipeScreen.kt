@@ -103,7 +103,9 @@ fun NewRecipeScreen(navController: NavHostController,
         onItemSelected = { selectedItem = it }
     ) { innerPadding ->
         Column (
-            modifier = Modifier.padding(innerPadding).fillMaxSize(),
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -246,8 +248,26 @@ fun newRecipeInformationTab(newRecipeViewModel: NewRecipeViewModel) {
 
 @Composable
 fun newRecipeIgredientsTab (newRecipeViewModel : NewRecipeViewModel, userId: Int) {
-    Text("Twoje składniki", fontSize = 20.sp)
+    Text("Edytuj swoje skłądniki", fontSize = 20.sp)
+    newRecipeViewModel.userIngredientsList.forEach  {
+            skladnik -> IngredientEditCart(skladnik, newRecipeViewModel)
+    }
+    Button(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = {newRecipeViewModel.userIngredientsList.add(
+        Ingredient(
+            id = -1,
+            title = "",
+            unit = newRecipeViewModel.utilsList.first(),
+            category = newRecipeViewModel.ingredientCategoryList.first(),
+            ownerId = userId
+        )
+        ) }
+    ) {
+        Text("Dodaj nowy składki" )
+    }
 
+    Text("Twoje składniki", fontSize = 20.sp)
     newRecipeViewModel.userIngredientsList.forEach  {
         skladnik -> IngredientCart(skladnik, userId)
     }
@@ -255,8 +275,41 @@ fun newRecipeIgredientsTab (newRecipeViewModel : NewRecipeViewModel, userId: Int
 }
 
 @Composable
-fun IngredientEditCart(ingredient: Ingredient) {
+fun IngredientEditCart(ingredient: Ingredient, newRecipeViewModel: NewRecipeViewModel) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clip(shape = RoundedCornerShape(20.dp))
+            .background(Color.DarkGray)
+            .padding(10.dp, 4.dp)
 
+    ) {
+
+        InputField(
+            label = ingredient.title,
+            value = newRecipeViewModel.nazwa,
+            onValueChange = { newRecipeViewModel.nazwa = it },
+            modifier = Modifier.weight(4f)
+        )
+        Box(Modifier.weight(2f) ) {
+            SelectBox(
+                options = newRecipeViewModel.ingredientCategoryList,
+                selectedOption = ingredient.category,
+                onOptionSelected = {ingredient.category = it},
+                label = ingredient.category
+            )
+        }
+        Box(Modifier.weight(1f) ) {
+            SelectBox(
+                options = newRecipeViewModel.utilsList,
+                selectedOption = ingredient.unit,
+                onOptionSelected = {ingredient.unit = it},
+                label = ingredient.unit
+            )
+        }
+
+    }
 }
 
 @Composable
