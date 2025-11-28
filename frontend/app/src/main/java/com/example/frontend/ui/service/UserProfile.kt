@@ -1,6 +1,9 @@
 package com.example.frontend.ui.service
 
 import Review
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import kotlinx.serialization.Serializable
 
 data class UserProfile(
@@ -33,14 +36,18 @@ data class ChangePassword(
     val newPassword: String,
 )
 
-@Serializable
-data class Ingredient(
+class Ingredient (
     val id: Int,
-    var title: String,
-    var unit: String,
-    var category: String,
+    title: String,
+    unit: String,
+    category: String,
     val ownerId: Int? = null
-)
+) {
+
+    var title by mutableStateOf(title)
+    var unit by mutableStateOf(unit)
+    var category by mutableStateOf(category)
+}
 
 @Serializable
 data class RecipeStep(
