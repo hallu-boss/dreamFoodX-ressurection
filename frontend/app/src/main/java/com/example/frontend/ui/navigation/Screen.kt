@@ -9,4 +9,6 @@ sealed class Screen(val route: String) {
     object Recipes : Screen("Moje przepisy")
 
     object Test : Screen("Testowy")
+
+    object NewRecipe: Screen("NewRecipe")
 }
