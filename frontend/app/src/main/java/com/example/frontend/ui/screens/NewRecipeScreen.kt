@@ -25,6 +25,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,38 +64,42 @@ fun NewRecipeScreen(navController: NavHostController,
     )
     var selectedTabIndex by remember { mutableStateOf(0) }
 
-    newRecipeViewModel.userIngredientsList.addAll(
-        listOf(
-            Ingredient(
-                title = "Ziemniaki",
-                unit = "g",
-                category = "Warzywa",
-                id = 1,
-                ownerId = 11
-            ),
-            Ingredient(
-                title = "Jogurt grecki",
-                unit = "g",
-                category = "Nabiał",
-                id = 1,
-                ownerId = 11
-            ),
-            Ingredient(
-                title = "Ogórek",
-                unit = "szt",
-                category = "Warzywa",
-                id = 1,
-                ownerId = 19
-            ),
-            Ingredient(
-                title = "Spaghetti",
-                unit = "g",
-                category = "Produkty zbożowe",
-                id = 1,
-                ownerId = 11
+    LaunchedEffect(Unit) {
+        if( newRecipeViewModel.userIngredientsList.isEmpty()) {
+            newRecipeViewModel.userIngredientsList.addAll(
+                listOf(
+                    Ingredient(
+                        title = "Ziemniaki",
+                        unit = "g",
+                        category = "Warzywa",
+                        id = 1,
+                        ownerId = 11
+                    ),
+                    Ingredient(
+                        title = "Jogurt grecki",
+                        unit = "g",
+                        category = "Nabiał",
+                        id = 1,
+                        ownerId = 11
+                    ),
+                    Ingredient(
+                        title = "Ogórek",
+                        unit = "szt",
+                        category = "Warzywa",
+                        id = 1,
+                        ownerId = 19
+                    ),
+                    Ingredient(
+                        title = "Spaghetti",
+                        unit = "g",
+                        category = "Produkty zbożowe",
+                        id = 1,
+                        ownerId = 11
+                    )
+                )
             )
-        )
-    )
+        }
+     }
 
 
     MainLayout(
@@ -268,46 +273,48 @@ fun newRecipeIgredientsTab (newRecipeViewModel : NewRecipeViewModel, userId: Int
     }
 
     Text("Twoje składniki", fontSize = 20.sp)
-    newRecipeViewModel.userIngredientsList.forEach  {
-        skladnik -> IngredientCart(skladnik, userId)
-    }
+
+        newRecipeViewModel.userIngredientsList.forEach { skladnik ->
+            if( skladnik.ownerId == userId)
+                IngredientCart(skladnik, userId)
+        }
 
 }
 
+
 @Composable
 fun IngredientEditCart(ingredient: Ingredient, newRecipeViewModel: NewRecipeViewModel) {
-    Row(
+    Column (
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
             .clip(shape = RoundedCornerShape(20.dp))
             .background(Color.DarkGray)
             .padding(10.dp, 4.dp)
-
     ) {
 
         InputField(
             label = ingredient.title,
-            value = newRecipeViewModel.nazwa,
-            onValueChange = { newRecipeViewModel.nazwa = it },
-            modifier = Modifier.weight(4f)
+            value = ingredient.title,
+            onValueChange = {
+                ingredient.title = it
+                newRecipeViewModel.nazwa = ingredient.title
+            }
         )
-        Box(Modifier.weight(2f) ) {
-            SelectBox(
-                options = newRecipeViewModel.ingredientCategoryList,
-                selectedOption = ingredient.category,
-                onOptionSelected = {ingredient.category = it},
-                label = ingredient.category
-            )
-        }
-        Box(Modifier.weight(1f) ) {
-            SelectBox(
-                options = newRecipeViewModel.utilsList,
-                selectedOption = ingredient.unit,
-                onOptionSelected = {ingredient.unit = it},
-                label = ingredient.unit
-            )
-        }
+        SelectBox(
+            options = newRecipeViewModel.ingredientCategoryList,
+            selectedOption = ingredient.category,
+            onOptionSelected = {ingredient.category = it},
+            label = ingredient.category
+        )
+
+        SelectBox(
+            options = newRecipeViewModel.utilsList,
+            selectedOption = ingredient.unit,
+            onOptionSelected = {ingredient.unit = it},
+            label = ingredient.unit
+        )
+
 
     }
 }

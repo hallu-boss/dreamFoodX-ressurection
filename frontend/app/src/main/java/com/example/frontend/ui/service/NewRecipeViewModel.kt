@@ -18,7 +18,6 @@ class NewRecipeViewModel : ViewModel() {
     var cena by mutableStateOf(0.0f)
 
     var obraz by mutableStateOf<Uri?>(null)
-
     fun validateBasicInformation( ) : Boolean {
         if( nazwa=="" || kategoria=="" || obraz == null)
             return false
