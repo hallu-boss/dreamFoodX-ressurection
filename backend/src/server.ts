@@ -19,6 +19,12 @@ const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
+
+app.post(
+  '/api/payment/webhook',
+  express.raw({ type: 'application/json' }),
+  stripeWebhook
+);
 app.use(express.json());
 
 // Swagger documentation
@@ -37,11 +43,7 @@ app.use('/api/recipe', recipeRoute);
 app.use('/api/cart', cartRouter);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payment', paymentRoutes);
-app.post(
-  '/api/payment/webhook',
-  express.raw({ type: 'application/json' }),
-  stripeWebhook
-);
+
 app.get('/', (req, res) => {
   res.send(
     'API działa prawidłowo. Użyj /api/health aby sprawdzić status. Dokumentacja dostępna pod /api-docs'

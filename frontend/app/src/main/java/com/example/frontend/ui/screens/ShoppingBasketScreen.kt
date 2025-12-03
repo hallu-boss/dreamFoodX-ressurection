@@ -194,7 +194,7 @@ private fun onPaymentSheetResult(
         }
         is PaymentSheetResult.Completed -> {
             Toast.makeText(context, "Płatność ZAKOŃCZONA Sukcesem!", Toast.LENGTH_LONG).show()
-            navController.navigate("success_screen")
+            navController.navigate("Moje przepisy")
         }
     }
 }
