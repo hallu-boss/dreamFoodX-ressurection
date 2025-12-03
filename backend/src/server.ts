@@ -10,7 +10,8 @@ import cartRouter from './routes/cart.routes';
 import { orderRoutes } from './routes/order.routes';
 import { errorHandler } from './middleware/errorHandler';
 import swaggerSpec from './swagger.config';
-
+import { stripeWebhook } from './controllers/payment.controller';
+import paymentRoutes from './routes/payment.routes';
 dotenv.config();
 
 const app = express();
@@ -18,6 +19,12 @@ const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
+
+app.post(
+  '/api/payment/webhook',
+  express.raw({ type: 'application/json' }),
+  stripeWebhook
+);
 app.use(express.json());
 
 // Swagger documentation
@@ -35,6 +42,7 @@ app.use('/api', healthRoute);
 app.use('/api/recipe', recipeRoute);
 app.use('/api/cart', cartRouter);
 app.use('/api/orders', orderRoutes);
+app.use('/api/payment', paymentRoutes);
 
 app.get('/', (req, res) => {
   res.send(

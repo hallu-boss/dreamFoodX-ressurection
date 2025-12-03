@@ -3,8 +3,10 @@ package com.example.frontend.ui.service
 import FacebookLoginRequest
 import GoogleLoginRequest
 import Comment
+import CreatePaymentIntentRequest
 import LoginRequest
 import LoginResponse
+import PaymentIntentResponse
 import RecipeCoversResponse
 import RecipeResponse
 import RegisterRequest
@@ -92,6 +94,7 @@ interface ApiService {
         @Path("recipeId") recipeId: Int
     ): Response<MessageResponse>
 
-
+    @POST("payment/create-intent") // Sugerowana nazwa endpointu na backendzie
+    suspend fun createPaymentIntent(@Body request: CreatePaymentIntentRequest): Response<PaymentIntentResponse>
 
 }
