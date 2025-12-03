@@ -10,7 +10,8 @@ import cartRouter from './routes/cart.routes';
 import { orderRoutes } from './routes/order.routes';
 import { errorHandler } from './middleware/errorHandler';
 import swaggerSpec from './swagger.config';
-
+import { stripeWebhook } from './controllers/payment.controller';
+import paymentRoutes from './routes/payment.routes';
 dotenv.config();
 
 const app = express();
@@ -35,7 +36,12 @@ app.use('/api', healthRoute);
 app.use('/api/recipe', recipeRoute);
 app.use('/api/cart', cartRouter);
 app.use('/api/orders', orderRoutes);
-
+app.use('/api/payment', paymentRoutes);
+app.post(
+  '/api/payment/webhook',
+  express.raw({ type: 'application/json' }),
+  stripeWebhook
+);
 app.get('/', (req, res) => {
   res.send(
     'API działa prawidłowo. Użyj /api/health aby sprawdzić status. Dokumentacja dostępna pod /api-docs'

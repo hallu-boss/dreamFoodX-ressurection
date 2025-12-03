@@ -1,7 +1,7 @@
 package com.example.frontend.ui.screens
 
 
-import android.widget.Space
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,22 +31,57 @@ import com.example.frontend.ui.components.Cart.CartItem
 import com.example.frontend.ui.components.FullSizeButton
 import com.example.frontend.ui.service.CartViewModel
 import com.example.frontend.ui.service.LoginViewModel
-
+import com.stripe.android.PaymentConfiguration
+import com.stripe.android.paymentsheet.PaymentSheet
+import com.stripe.android.paymentsheet.PaymentSheetResult
+import com.stripe.android.paymentsheet.rememberPaymentSheet
 @Composable
-fun ShoppingBasketScreen(navController: NavHostController,
-                         loginViewModel: LoginViewModel,
-                          cartViewModel: CartViewModel = viewModel()
+fun ShoppingBasketScreen(
+    navController: NavHostController,
+    loginViewModel: LoginViewModel,
+    cartViewModel: CartViewModel = viewModel()
 ) {
     var selectedItem by remember { mutableStateOf("koszyk") }
+    val context = LocalContext.current
 
     cartViewModel.setToken(loginViewModel.token)
-    cartViewModel.getUserCart()
-    val context = LocalContext.current
+
     var changeElement by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
+
+    val paymentSheet = rememberPaymentSheet { result ->
+        // To jest callback obsługujący wynik płatności
+        isLoading = false
+        onPaymentSheetResult(context, navController, result)
+    }
 
     LaunchedEffect(changeElement) {
         cartViewModel.getUserCart()
     }
+
+    val clientSecret = cartViewModel.clientSecret
+    val publishableKey = cartViewModel.publishableKey
+
+    LaunchedEffect(clientSecret, publishableKey) {
+        if (publishableKey != null) {
+            PaymentConfiguration.init(context, publishableKey)
+        }
+
+        if (clientSecret != null && publishableKey != null) {
+
+            val configuration = PaymentSheet.Configuration.Builder("DreamFood App")
+                .allowsDelayedPaymentMethods(true)
+                .build()
+
+            paymentSheet.presentWithPaymentIntent(
+                clientSecret,
+                configuration
+            )
+
+            cartViewModel.clientSecret = null
+        }
+    }
+
 
     MainLayout(
         navController = navController,
@@ -58,8 +93,7 @@ fun ShoppingBasketScreen(navController: NavHostController,
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(8.dp)
-                ,
+                    .padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
@@ -95,12 +129,34 @@ fun ShoppingBasketScreen(navController: NavHostController,
                             printTotalPrice(cartViewModel)
                             Spacer(Modifier.height(16.dp))
 
-                            FullSizeButton(
-                                text = "Przejdz do podsumowania",
-                                onClick = {},
-                                modifier = Modifier
-                                    .padding(8.dp)
-                            )
+                            if (isLoading) {
+                                Box(modifier = Modifier.fillMaxWidth().height(48.dp), contentAlignment = Alignment.Center) {
+                                    CircularProgressIndicator()
+                                }
+                            } else {
+                                FullSizeButton(
+                                    text = "Przejdź do płatności",
+                                    onClick = {
+
+                                        // 1. Bezpieczne pobranie wartości total (Float)
+                                        val totalAmountFloat = cartViewModel.cart?.total ?: 0f
+
+                                        if (totalAmountFloat > 0f) { // Porównanie z 0f (Float)
+                                            isLoading = true
+
+                                            // 2. Przeliczenie na grosze i konwersja na Long dla Stripe
+                                            // (12.50 PLN * 100 = 1250 groszy)
+                                            val amountInCents = (totalAmountFloat * 100).toLong()
+
+                                            cartViewModel.createPaymentIntent(amountInCents)
+                                        } else {
+                                            Toast.makeText(context, "Koszyk jest pusty!", Toast.LENGTH_SHORT).show()
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                )
+                            }
 
                         }
                         else {
@@ -122,6 +178,26 @@ fun ShoppingBasketScreen(navController: NavHostController,
 
 }
 
+
+
+private fun onPaymentSheetResult(
+    context: Context,
+    navController: NavHostController,
+    result: PaymentSheetResult
+) {
+    when (result) {
+        is PaymentSheetResult.Canceled -> {
+            Toast.makeText(context, "Płatność Anulowana", Toast.LENGTH_SHORT).show()
+        }
+        is PaymentSheetResult.Failed -> {
+            Toast.makeText(context, "Błąd Płatności: ${result.error.localizedMessage}", Toast.LENGTH_LONG).show()
+        }
+        is PaymentSheetResult.Completed -> {
+            Toast.makeText(context, "Płatność ZAKOŃCZONA Sukcesem!", Toast.LENGTH_LONG).show()
+            navController.navigate("success_screen")
+        }
+    }
+}
 
 
 @Composable
