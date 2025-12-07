@@ -50,14 +50,14 @@ class Ingredient (
 }
 
 data class Step(
-    val title: String,
-    val stepType: StepType,
-    val ingredientId: Int? = null,
-    val amount: Double? = null,
-    val time: String? = null,
-    val temperature: Int? = null,
-    val mixSpeed: Int? = null,
-    val description: String? = null
+    var title: String,
+    var stepType: StepType,
+    var ingredientId: Int? = null,
+    var amount: Double? = null,
+    var time: String? = null,
+    var temperature: Int? = null,
+    var mixSpeed: Int? = null,
+    var description: String? = null
 )
 
 @Serializable

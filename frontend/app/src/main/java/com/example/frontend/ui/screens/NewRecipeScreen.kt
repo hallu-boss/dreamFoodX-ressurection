@@ -26,10 +26,12 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,6 +46,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -57,6 +60,8 @@ import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.service.NewRecipeViewModel
 import com.example.frontend.ui.service.Step
 import com.example.frontend.ui.service.StepType
+import org.xmlpull.v1.sax2.Driver
+import kotlin.String
 
 @Composable
 fun NewRecipeScreen(navController: NavHostController,
@@ -370,7 +375,6 @@ fun newRecipeStepsTab(newRecipeViewModel: NewRecipeViewModel) {
                     }
             )
         }
-//        StepsList(newRecipeViewModel)
     }
     Button(onClick = {showDialog = true },
         modifier = Modifier.fillMaxWidth())
@@ -438,38 +442,70 @@ fun NewRecipeStepDialog(
     onConfirm: (Step) -> Unit
 ) {
 
+    val stepType = listOf("Dodaj składnik", "Gotowanie", "Opisowy")
+    var selectedOption = remember { mutableStateOf("") }
+
+    var tytul by remember { mutableStateOf("") }
+
+    var retStep by remember { mutableStateOf( value = Step(
+             title= tytul,
+             stepType = StepType.ADD_INGREDIENT
+        )
+    ) }
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
         title = { Text("Dodaj nowy składnik") },
         text = {
             Column {
-//                OutlinedTextField(
-//                    value = imie,
-//                    onValueChange = { imie = it },
-//                    label = { Text("Imię") },
-//                    modifier = Modifier.fillMaxWidth()
-//                )
-//                OutlinedTextField(
-//                    value = nazwisko,
-//                    onValueChange = { nazwisko = it },
-//                    label = { Text("Nazwisko") },
-//                    modifier = Modifier.fillMaxWidth()
-//                )
-//                OutlinedTextField(
-//                    value = email,
-//                    onValueChange = { email = it },
-//                    label = { Text("Email") },
-//                    modifier = Modifier.fillMaxWidth(),
-//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-//                )
+                SelectBox(
+                    options = stepType,
+                    selectedOption = selectedOption.value,
+                    onOptionSelected = {selectedOption.value = it},
+                    label = "Wybierz typ kroku"
+                )
+                Spacer(Modifier.height(10.dp))
+
+                Driver()
+                Spacer(Modifier.height(5.dp))
+
+                OutlinedTextField(
+                    value = tytul,
+                    onValueChange = { tytul = it },
+                    label = { Text("Tytuł kroku") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+
+                if( selectedOption.value == stepType[0]) {
+                    retStep.stepType = StepType.ADD_INGREDIENT
+
+
+                }
+                else if( selectedOption.value == stepType[1] ) {
+                    retStep.stepType = StepType.COOKING
+                    var czas by remember { mutableStateOf("00:00") }
+                    TimeField(
+                        value = czas,
+                        onValueChange = {czas = it}
+                    )
+                }
+                else if( selectedOption.value == stepType[2] ) {
+                    retStep.stepType = StepType.DESCRIPTION
+                    var opis by remember { mutableStateOf("") }
+
+                    OutlinedTextField(
+                        value = opis,
+                        onValueChange = { opis = it },
+                        label = { Text("Opis kroku") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
             }
         },
         confirmButton = {
-            TextButton(onClick = {
-
-
-            }) {
+            TextButton(onClick = { onConfirm(retStep) }) {
                 Text("Zapisz")
             }
         },
@@ -478,6 +514,39 @@ fun NewRecipeStepDialog(
                 Text("Anuluj")
             }
         }
+    )
+}
+
+
+@Composable
+fun TimeField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String = "Czas (mm:ss)"
+) {
+    TextField(
+        value = value,
+        onValueChange = { newValue ->
+
+            val digits = newValue.filter { it.isDigit() }
+
+
+            val limited = digits.take(4)
+
+
+            val formatted = when {
+                limited.length <= 2 -> limited
+                else -> limited.take(2) + ":" + limited.drop(2)
+            }
+
+            onValueChange(formatted)
+        },
+        label = { Text(label) },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number
+        ),
+        modifier = Modifier.fillMaxWidth()
     )
 }
 
