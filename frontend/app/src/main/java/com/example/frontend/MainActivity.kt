@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
             val recipeView : RecipeViewModel = viewModel()
             val loginViewModel: LoginViewModel = viewModel()
             // Testowy użytkownik
-            loginViewModel.login("john.doe@example.com", "password123")
+//            loginViewModel.login("john.doe@example.com", "password123")
             //  loginViewModel.login("michalkaniewski1997@gmail.com", "michalkaniewski1997@gmail.com")
 
 
@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Screen.Home.route
+                    startDestination = Screen.Login.route
                 ) {
                     composable(Screen.Register.route) { RegisterScreen(navController) }
                     composable(Screen.Login.route) {

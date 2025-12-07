@@ -152,7 +152,7 @@ fun CorrectButton(recipe: RecipeCover,
 
 
 
-    if(displayBuyButton && recipe.price > 0 && !(recipe.isOwned == true)) {
+    if(displayBuyButton && recipe.price > 0 && !(recipe.isOwned == true || recipe.isPurchased == true)) {
         Button(onClick = {
             onAddToCart(recipe.id)
             isInCartRemember = !isInCartRemember
