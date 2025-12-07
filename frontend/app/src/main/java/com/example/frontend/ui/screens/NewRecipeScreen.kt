@@ -508,6 +508,10 @@ fun NewRecipeStepDialog(
                         onValueChange = { sppedBlade = it},
                         label = "Prędkość ostrzy: "
                     )
+
+                    retStep.time = czas.text
+                    retStep.temperature = temp
+                    retStep.mixSpeed = sppedBlade
                 }
                 else if( selectedOption.value == stepType[2] ) {
                     retStep.stepType = StepType.DESCRIPTION
@@ -519,6 +523,8 @@ fun NewRecipeStepDialog(
                         label = { Text("Opis kroku") },
                         modifier = Modifier.fillMaxWidth()
                     )
+
+                    retStep.description = opis
                 }
 
             }
