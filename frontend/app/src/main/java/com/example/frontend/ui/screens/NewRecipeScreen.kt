@@ -27,6 +27,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -64,6 +65,7 @@ import com.example.frontend.ui.service.Step
 import com.example.frontend.ui.service.StepType
 import org.xmlpull.v1.sax2.Driver
 import kotlin.String
+import kotlin.math.roundToInt
 
 @Composable
 fun NewRecipeScreen(navController: NavHostController,
@@ -468,8 +470,6 @@ fun NewRecipeStepDialog(
                 )
                 Spacer(Modifier.height(10.dp))
 
-                Driver()
-                Spacer(Modifier.height(5.dp))
 
                 OutlinedTextField(
                     value = tytul,
@@ -485,12 +485,28 @@ fun NewRecipeStepDialog(
 
                 }
                 else if( selectedOption.value == stepType[1] ) {
+                    Spacer(Modifier.height(10.dp))
                     retStep.stepType = StepType.COOKING
                     var czas by remember { mutableStateOf(TextFieldValue("")) }
-
                     TimeField(
                         value = czas,
                         onValueChange = {czas = it}
+                    )
+                    Spacer(Modifier.height(10.dp))
+
+                    var temp by remember { mutableStateOf(1) }
+                    FiveLevelSlider(
+                        value = temp,
+                        onValueChange = { temp = it},
+                        label = "Temperatura: "
+                    )
+                    Spacer(Modifier.height(10.dp))
+
+                    var sppedBlade by remember { mutableStateOf(1) }
+                    FiveLevelSlider(
+                        value = sppedBlade,
+                        onValueChange = { sppedBlade = it},
+                        label = "Prędkość ostrzy: "
                     )
                 }
                 else if( selectedOption.value == stepType[2] ) {
@@ -518,6 +534,39 @@ fun NewRecipeStepDialog(
             }
         }
     )
+}
+
+@Composable
+fun FiveLevelSlider(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    label: String = "Poziom"
+) {
+    val labels = listOf(
+        "Bardzo niska",
+        "Niska",
+        "Średnia",
+        "Wysoka",
+        "Bardzo wysoka"
+    )
+
+    Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+
+        Text(
+            text = "$label: ${labels[value - 1]}",
+            style = MaterialTheme.typography.bodyLarge
+        )
+
+        Slider(
+            value = value.toFloat(),
+            onValueChange = { newValue ->
+                onValueChange(newValue.roundToInt().coerceIn(1, 5))
+            },
+            valueRange = 1f..5f,
+            steps = 3,  
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
 }
 
 
