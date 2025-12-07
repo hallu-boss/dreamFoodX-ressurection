@@ -1,5 +1,6 @@
 package com.example.frontend.ui.components
 
+import com.example.frontend.ui.service.Ingredient
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -65,6 +67,57 @@ fun SelectBox(
                     text = { Text(gender) },
                     onClick = {
                         onOptionSelected(gender)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun IngredientSelectBox(
+    options: SnapshotStateList<Ingredient>,
+    selectedOption: Ingredient?,
+    onOptionSelected: (Ingredient) -> Unit,
+    label: String = "Wybierz składnik"
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        OutlinedTextField(
+            value = selectedOption?.title ?: "",
+            onValueChange = { },
+            readOnly = true,
+            label = { Text(label) },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+                .shadow(20.dp, RoundedCornerShape(12.dp))
+                .background(Color.White, RoundedCornerShape(12.dp)),
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White,
+                cursorColor = Color.Black
+            ),
+            shape = RoundedCornerShape(12.dp)
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            options.forEach { ingredient ->
+                DropdownMenuItem(
+                    text = { Text(ingredient.title) },
+                    onClick = {
+                        onOptionSelected(ingredient)
                         expanded = false
                     }
                 )
