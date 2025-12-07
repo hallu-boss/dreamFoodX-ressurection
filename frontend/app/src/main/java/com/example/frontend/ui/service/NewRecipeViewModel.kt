@@ -30,4 +30,24 @@ class NewRecipeViewModel : ViewModel() {
     var userIngredientsList = mutableStateListOf<Ingredient>()
 
 
+//     kroki porzepisu
+
+    var steps = mutableStateListOf<Step>()
+        private set
+
+    init {
+        steps.addAll(
+            listOf(
+                Step("Dodaj mleko", StepType.ADD_INGREDIENT, ingredientId = 1, amount = 200.0),
+                Step("Gotuj", StepType.COOKING, time = "10 min", temperature = 100),
+                Step("Dodaj przyprawy", StepType.DESCRIPTION, description = "Sól i pieprz")
+            )
+        )
+    }
+
+    fun moveStep(fromIndex: Int, toIndex: Int) {
+        steps.add(toIndex, steps.removeAt(fromIndex))
+    }
+
+
 }
