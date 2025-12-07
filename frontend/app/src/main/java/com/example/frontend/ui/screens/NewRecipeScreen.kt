@@ -391,7 +391,7 @@ fun newRecipeStepsTab(newRecipeViewModel: NewRecipeViewModel) {
         NewRecipeStepDialog (
             onDismiss = { showDialog = false },
             onConfirm = {
-
+                step -> newRecipeViewModel.addNewStep(step)
                 showDialog = false
             }
         )
@@ -424,7 +424,7 @@ fun StepCard(step: Step, modifier: Modifier = Modifier) {
                 StepType.COOKING -> {
                     Text("Typ: Gotowanie")
                     step.time?.let { Text("Czas: $it") }
-                    step.temperature?.let { Text("Temperatura: $it °C") }
+                    step.temperature?.let { Text("Temperatura: $it") }
                     step.mixSpeed?.let { Text("Prędkość mieszania: $it") }
                 }
                 StepType.DESCRIPTION -> {
