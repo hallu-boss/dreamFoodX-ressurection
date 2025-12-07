@@ -97,4 +97,10 @@ interface ApiService {
     @POST("payment/create-intent") // Sugerowana nazwa endpointu na backendzie
     suspend fun createPaymentIntent(@Body request: CreatePaymentIntentRequest): Response<PaymentIntentResponse>
 
+    @GET("ingredients/all")
+    suspend fun getPublicIngredients() : Response<List<Ingredient>>
+
+
+
+
 }

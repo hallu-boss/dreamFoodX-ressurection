@@ -1,8 +1,10 @@
 package com.example.frontend.ui.screens
 
+import android.annotation.SuppressLint
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,6 +38,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -56,6 +59,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.MainLayout
 import com.example.frontend.ui.components.FullSizeButton
+import com.example.frontend.ui.components.IngredientSelectBox
 import com.example.frontend.ui.components.InputField
 import com.example.frontend.ui.components.SelectBox
 import com.example.frontend.ui.service.Ingredient
@@ -63,7 +67,6 @@ import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.service.NewRecipeViewModel
 import com.example.frontend.ui.service.Step
 import com.example.frontend.ui.service.StepType
-import org.xmlpull.v1.sax2.Driver
 import kotlin.String
 import kotlin.math.roundToInt
 
@@ -83,6 +86,7 @@ fun NewRecipeScreen(navController: NavHostController,
     var selectedTabIndex by remember { mutableStateOf(0) }
 
     LaunchedEffect(Unit) {
+        newRecipeViewModel.token = loginViewModel.token
         if( newRecipeViewModel.userIngredientsList.isEmpty()) {
             newRecipeViewModel.userIngredientsList.addAll(
                 listOf(
@@ -398,7 +402,8 @@ fun newRecipeStepsTab(newRecipeViewModel: NewRecipeViewModel) {
             onConfirm = {
                 step -> newRecipeViewModel.addNewStep(step)
                 showDialog = false
-            }
+            },
+            newRecipeViewModel = newRecipeViewModel
         )
     }
 }
@@ -445,12 +450,14 @@ fun StepCard(step: Step, modifier: Modifier = Modifier) {
 
 
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun NewRecipeStepDialog(
     onDismiss: () -> Unit,
-    onConfirm: (Step) -> Unit
+    onConfirm: (Step) -> Unit,
+    newRecipeViewModel: NewRecipeViewModel
 ) {
-
+    var error by remember { mutableStateOf(false) }
     val stepType = listOf("Dodaj składnik", "Gotowanie", "Opisowy")
     var selectedOption = remember { mutableStateOf("") }
 
@@ -462,9 +469,39 @@ fun NewRecipeStepDialog(
         )
     ) }
 
+    LaunchedEffect(Unit ) {
+        newRecipeViewModel.getPublicIngredients()
+        Log.e("NewRecipeStepDialog", "${newRecipeViewModel.publicIngredientsList.size}")
+
+    }
+
+
+    var selectedCategory by remember { mutableStateOf("") }
+    val ingredientInCategory = remember { mutableStateListOf<Ingredient>() }
+
+    LaunchedEffect(selectedCategory) {
+        if( selectedOption.value == stepType[0]) {
+            val filteredIngredients = newRecipeViewModel.publicIngredientsList
+                .filter { it.category == selectedCategory }
+                .map { ingredient ->
+                    Ingredient(
+                        id = ingredient.id,
+                        title = ingredient.title,
+                        unit = ingredient.unit,
+                        category = ingredient.category,
+                        ownerId = ingredient.ownerId
+                    )
+                }
+
+
+            ingredientInCategory.clear()
+            ingredientInCategory.addAll(filteredIngredients)
+        }
+    }
+
     AlertDialog(
         onDismissRequest = { onDismiss() },
-        title = { Text("Dodaj nowy składnik") },
+        title = { Text("Dodaj nowy krok przepisu") },
         text = {
             Column {
                 SelectBox(
@@ -487,6 +524,43 @@ fun NewRecipeStepDialog(
                 if( selectedOption.value == stepType[0]) {
                     retStep.stepType = StepType.ADD_INGREDIENT
 
+
+                    SelectBox(
+                        options = newRecipeViewModel.ingredientCategoryList,
+                        selectedOption = selectedCategory,
+                        onOptionSelected = { selectedCategory = it},
+                        label = "Wybierz kategorię produktu"
+                    )
+
+                    var selectedIngredient by remember { mutableStateOf<Ingredient?>(null) }
+
+                    IngredientSelectBox(
+                        options = ingredientInCategory,
+                        selectedOption = selectedIngredient,
+                        onOptionSelected = { selectedIngredient = it },
+                        label = "Wybierz składnik"
+                    )
+
+                    var amount by remember { mutableStateOf(0.0) }
+                    var amountText by remember { mutableStateOf(amount.toString()) }
+
+                    OutlinedTextField(
+                        value = amountText,
+                        onValueChange = { text ->
+                            amountText = text
+
+                            val parsed = text.toDoubleOrNull()
+                            if (parsed != null) {
+                                amount = parsed
+                            }
+                        },
+                        label = { Text("Ilość") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    if( selectedIngredient != null)
+                        retStep.ingredientId = selectedIngredient!!.id
+                    retStep.amount = amount
 
                 }
                 else if( selectedOption.value == stepType[1] ) {
@@ -535,7 +609,8 @@ fun NewRecipeStepDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = { onConfirm(retStep) }) {
+            TextButton(onClick = {
+                onConfirm(retStep) }) {
                 Text("Zapisz")
             }
         },
