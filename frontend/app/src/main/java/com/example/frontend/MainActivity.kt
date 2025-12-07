@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Screen.Home.route
+                    startDestination = Screen.NewRecipe.route
                 ) {
                     composable(Screen.Register.route) { RegisterScreen(navController) }
                     composable(Screen.Login.route) {

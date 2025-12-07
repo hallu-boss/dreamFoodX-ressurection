@@ -18,17 +18,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -261,7 +262,7 @@ fun newRecipeInformationTab(newRecipeViewModel: NewRecipeViewModel) {
 
 @Composable
 fun newRecipeIgredientsTab (newRecipeViewModel : NewRecipeViewModel, userId: Int) {
-    Text("Edytuj swoje skłądniki", fontSize = 20.sp)
+    Text("Edytuj swoje składniki", fontSize = 20.sp)
     newRecipeViewModel.userIngredientsList.forEach  {
             skladnik -> IngredientEditCart(skladnik, newRecipeViewModel)
     }
@@ -282,10 +283,10 @@ fun newRecipeIgredientsTab (newRecipeViewModel : NewRecipeViewModel, userId: Int
 
     Text("Twoje składniki", fontSize = 20.sp)
 
-//    newRecipeViewModel.userIngredientsList.forEach { skladnik ->
-//        if( skladnik.ownerId == userId)
-//            IngredientCart(skladnik, userId)
-//    }
+    newRecipeViewModel.userIngredientsList.forEach { skladnik ->
+        if( skladnik.ownerId == userId)
+            IngredientCart(skladnik, userId)
+    }
 
 }
 
@@ -349,30 +350,43 @@ fun IngredientCart(ingredient: Ingredient, userId: Int) {
 
 @Composable
 fun newRecipeStepsTab(newRecipeViewModel: NewRecipeViewModel) {
+    var showDialog by remember { mutableStateOf(false) }
+
     Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            text = "newRecipeStepsTab",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(16.dp)
-        )
+
+        val steps =  newRecipeViewModel.steps
+        steps.forEachIndexed { index, krok ->
+            StepCard(
+                step = krok,
+                modifier = Modifier
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onLongPress = {
+                                if (index < steps.size - 1) {
+                                    newRecipeViewModel.moveStep(index, index + 1)
+                                }
+                            }
+                        )
+                    }
+            )
+        }
 //        StepsList(newRecipeViewModel)
-//        val steps =  newRecipeViewModel.steps
-//        steps.forEachIndexed { index, krok ->
-//            StepCard(
-//                step = krok,
-//                modifier = Modifier
-//                    .pointerInput(Unit) {
-//                        detectTapGestures(
-//                            onLongPress = {
-//                                if (index < steps.size - 1) {
-//                                    newRecipeViewModel.moveStep(index, index + 1)
-//                                }
-//                            }
-//                        )
-//                    }
-//            )
-//        }
-        StepsList(newRecipeViewModel)
+    }
+    Button(onClick = {showDialog = true },
+        modifier = Modifier.fillMaxWidth())
+    {
+        Text("Dodaj krok")
+    }
+
+
+    if (showDialog) {
+        NewRecipeStepDialog (
+            onDismiss = { showDialog = false },
+            onConfirm = {
+
+                showDialog = false
+            }
+        )
     }
 }
 
@@ -416,32 +430,55 @@ fun StepCard(step: Step, modifier: Modifier = Modifier) {
 
 
 
+
+
 @Composable
-fun StepsList(newRecipeViewModel: NewRecipeViewModel) {
-    val steps = newRecipeViewModel.steps
+fun NewRecipeStepDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (Step) -> Unit
+) {
 
-    LazyColumn {
-        itemsIndexed(
-            items = steps,
-            key = { _, step -> step.title } // Każdy krok musi mieć unikalny klucz
-        ) { index, step ->
 
-            StepCard(
-                step = step,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp)
-                    .pointerInput(Unit) {
-                        detectTapGestures(
-                            onLongPress = {
-                                // Prosty swap z następnym elementem
-                                if (index < steps.size - 1) {
-                                    newRecipeViewModel.moveStep(index, index + 1)
-                                }
-                            }
-                        )
-                    }
-            )
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = { Text("Dodaj nowy składnik") },
+        text = {
+            Column {
+//                OutlinedTextField(
+//                    value = imie,
+//                    onValueChange = { imie = it },
+//                    label = { Text("Imię") },
+//                    modifier = Modifier.fillMaxWidth()
+//                )
+//                OutlinedTextField(
+//                    value = nazwisko,
+//                    onValueChange = { nazwisko = it },
+//                    label = { Text("Nazwisko") },
+//                    modifier = Modifier.fillMaxWidth()
+//                )
+//                OutlinedTextField(
+//                    value = email,
+//                    onValueChange = { email = it },
+//                    label = { Text("Email") },
+//                    modifier = Modifier.fillMaxWidth(),
+//                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+//                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+
+
+            }) {
+                Text("Zapisz")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { onDismiss() }) {
+                Text("Anuluj")
+            }
         }
-    }
+    )
 }
+
+
