@@ -93,5 +93,10 @@ interface ApiService {
     ): Response<MessageResponse>
 
 
+    @GET("ingredients/all")
+    suspend fun getPublicIngredients() : Response<List<Ingredient>>
+
+
+
 
 }
