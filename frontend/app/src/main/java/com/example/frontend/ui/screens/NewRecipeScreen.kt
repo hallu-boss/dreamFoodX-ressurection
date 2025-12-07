@@ -45,8 +45,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -484,7 +486,8 @@ fun NewRecipeStepDialog(
                 }
                 else if( selectedOption.value == stepType[1] ) {
                     retStep.stepType = StepType.COOKING
-                    var czas by remember { mutableStateOf("00:00") }
+                    var czas by remember { mutableStateOf(TextFieldValue("")) }
+
                     TimeField(
                         value = czas,
                         onValueChange = {czas = it}
@@ -520,34 +523,46 @@ fun NewRecipeStepDialog(
 
 @Composable
 fun TimeField(
-    value: String,
-    onValueChange: (String) -> Unit,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
     label: String = "Czas (mm:ss)"
 ) {
     TextField(
         value = value,
-        onValueChange = { newValue ->
+        onValueChange = { input ->
 
-            val digits = newValue.filter { it.isDigit() }
+            val digits = input.text.filter { it.isDigit() }
 
-
-            val limited = digits.take(4)
-
+            val limited = digits.take(6)
 
             val formatted = when {
-                limited.length <= 2 -> limited
-                else -> limited.take(2) + ":" + limited.drop(2)
+                limited.length <= 2 -> limited   // sekundy, ale bez :
+                else -> {
+                    val minutes = limited.dropLast(2)
+                    val seconds = limited.takeLast(2)
+                    "$minutes:$seconds"
+                }
             }
 
-            onValueChange(formatted)
+            val valid = if (formatted.contains(":")) {
+                val parts = formatted.split(":")
+                val minutes = parts[0]
+                val seconds = parts.getOrNull(1)?.toIntOrNull() ?: 0
+
+                val safeSeconds = seconds.coerceIn(0, 59)
+                "$minutes:${"%02d".format(safeSeconds)}"
+            } else formatted
+
+            onValueChange(
+                TextFieldValue(
+                    text = valid,
+                    selection = TextRange(valid.length)
+                )
+            )
         },
         label = { Text(label) },
         singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Number
-        ),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         modifier = Modifier.fillMaxWidth()
     )
 }
-
-
