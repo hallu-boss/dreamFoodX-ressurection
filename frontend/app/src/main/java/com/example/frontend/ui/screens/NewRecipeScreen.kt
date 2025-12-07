@@ -171,6 +171,11 @@ fun NewRecipeScreen(navController: NavHostController,
                         Toast.makeText(context, "Należy wypełnić: Nazwę, kategorię oraz dodać obraz", Toast.LENGTH_LONG).show()
                     }
 
+                    if( newRecipeViewModel.stepsListisEmpty() ) {
+                        isError = true
+                        Toast.makeText(context, "Przepis musi posiadać kroki wykonania", Toast.LENGTH_LONG).show()
+                    }
+
                     if( !isError) {
                         TODO() // wysyłanie na serwer nowego przepisu
                     }
