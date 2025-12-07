@@ -35,9 +35,14 @@ class NewRecipeViewModel : ViewModel() {
     var steps = mutableStateListOf<Step>()
         private set
 
-    public fun addNewStep(step: Step ) {
+    fun addNewStep(step: Step ) {
         steps.add(step)
     }
+
+    fun stepsListisEmpty() : Boolean {
+        return steps.isEmpty()
+    }
+
 
 
     fun moveStep(fromIndex: Int, toIndex: Int) {
