@@ -36,18 +36,13 @@ data class ChangePassword(
     val newPassword: String,
 )
 
-class Ingredient (
+data class Ingredient (
     val id: Int,
-    title: String,
-    unit: String,
-    category: String,
+    var title: String,
+    var unit: String,
+    var category: String,
     val ownerId: Int? = null
-) {
-
-    var title by mutableStateOf(title)
-    var unit by mutableStateOf(unit)
-    var category by mutableStateOf(category)
-}
+)
 
 data class Step(
     var title: String,
