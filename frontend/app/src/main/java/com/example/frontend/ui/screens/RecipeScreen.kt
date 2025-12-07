@@ -51,7 +51,8 @@ fun RecipeScreen(navController: NavHostController,
 
     val tabs = listOf(
         "Moje przepisy",
-        "Ulubione"
+        "Polubione",
+        "Kupione"
     )
     var selectedTabIndex by remember { mutableStateOf(0) }
 
@@ -131,7 +132,10 @@ fun RecipeScreen(navController: NavHostController,
                                         isRecipeTODisplay = recipe.isOwned
                                     }
                                     1 -> {
-                                        isRecipeTODisplay = recipe.isPurchased
+                                        isRecipeTODisplay = recipe.isPurchased && (recipe.price == 0.0)
+                                    }
+                                    2 -> {
+                                        isRecipeTODisplay = recipe.isPurchased && (recipe.price > 0.0)
                                     }
                                 }
 
