@@ -424,21 +424,17 @@ fun StepCard(step: Step, modifier: Modifier = Modifier) {
             )
 
             Spacer(modifier = Modifier.height(8.dp))
-
+            Text(step.title, fontWeight = FontWeight.Bold)
             when (step.stepType) {
                 StepType.ADD_INGREDIENT -> {
-                    Text("Typ: Dodaj składnik")
-                    Text("ID składnika: ${step.ingredientId}")
                     Text("Ilość: ${step.amount}")
                 }
                 StepType.COOKING -> {
-                    Text("Typ: Gotowanie")
                     step.time?.let { Text("Czas: $it") }
                     step.temperature?.let { Text("Temperatura: $it") }
                     step.mixSpeed?.let { Text("Prędkość mieszania: $it") }
                 }
                 StepType.DESCRIPTION -> {
-                    Text("Typ: Opis")
                     step.description?.let { Text(it) }
                 }
             }
