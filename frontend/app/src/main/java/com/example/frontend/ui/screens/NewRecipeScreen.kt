@@ -424,7 +424,7 @@ fun StepCard(step: Step, modifier: Modifier = Modifier) {
             )
 
             Spacer(modifier = Modifier.height(8.dp))
-            Text(step.title, fontWeight = FontWeight.Bold)
+
             when (step.stepType) {
                 StepType.ADD_INGREDIENT -> {
                     Text("Ilość: ${step.amount}")
@@ -453,7 +453,7 @@ fun NewRecipeStepDialog(
     onConfirm: (Step) -> Unit,
     newRecipeViewModel: NewRecipeViewModel
 ) {
-    var error by remember { mutableStateOf(false) }
+    var errorTytul by remember { mutableStateOf(false) }
     val stepType = listOf("Dodaj składnik", "Gotowanie", "Opisowy")
     var selectedOption = remember { mutableStateOf("") }
 
@@ -511,7 +511,12 @@ fun NewRecipeStepDialog(
 
                 OutlinedTextField(
                     value = tytul,
-                    onValueChange = { tytul = it },
+                    isError = errorTytul,
+                    onValueChange = { tytul = it
+                            if( tytul!= "") {
+                                errorTytul = false
+                            }
+                                    },
                     label = { Text("Tytuł kroku") },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -606,7 +611,15 @@ fun NewRecipeStepDialog(
         },
         confirmButton = {
             TextButton(onClick = {
-                onConfirm(retStep) }) {
+                retStep.title = tytul
+                if( tytul != "") {
+                    onConfirm(retStep)
+                }
+                else {
+                    errorTytul = true
+                }
+
+            }) {
                 Text("Zapisz")
             }
         },
