@@ -9,6 +9,7 @@ data class RecipeCover(
     val title: String,
     val image: String?,
     val category: String,
+    val visible: Boolean,
     val price: Double,
     val author: Author,
     val createdAt: String,

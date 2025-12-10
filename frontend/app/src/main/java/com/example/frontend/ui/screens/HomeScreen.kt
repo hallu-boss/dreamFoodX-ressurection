@@ -85,8 +85,8 @@ fun HomeScreen(navController: NavHostController,
                         ) {
                             items(filteredRecipes) { recipe ->
                                 val isRecipeInCart = cartViewModel.cart?.items?.any { it.recipeId == recipe.id } == true
-
-                                RecipeCoverItem(
+                                if( recipe.visible)
+                                    RecipeCoverItem(
                                     recipe = recipe,
                                     isInCart = isRecipeInCart,
                                     onAddToCart = { recipeId ->
