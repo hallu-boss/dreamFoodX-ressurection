@@ -17,7 +17,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import kotlin.random.Random
 
 class NewRecipeViewModel : ViewModel() {
-    val categories = listOf("wszystkie", "przekąska", "obiad", "sniadanie", "dodatek", "napój")
+    val categories = listOf("wszystkie", "przekąska", "obiad", "sniadanie", "dodatek", "napój", "deser")
     var isLoading by mutableStateOf(false)
 
     var token by mutableStateOf<String?>(null)
