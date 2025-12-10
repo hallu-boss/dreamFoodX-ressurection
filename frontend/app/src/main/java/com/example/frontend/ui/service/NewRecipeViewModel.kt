@@ -19,7 +19,7 @@ class NewRecipeViewModel : ViewModel() {
     var errorMessage by mutableStateOf<String?>(null)
     var responseMmessage by mutableStateOf<String?>(null)
 
-    private var rand = Random(0)
+    private var rand = Random(-1000)
 
      fun nextUnicateRandIndex() : Int {
          var wylosowana = rand.nextInt()
@@ -121,6 +121,54 @@ class NewRecipeViewModel : ViewModel() {
             }
         }
     }
+
+    fun updateIngredient(index: Int) {
+        viewModelScope.launch {
+            try {
+                val response = ApiClient.getApi(token ?: "").updateIngredient(
+                    id = userIngredientsList[index].id,
+                    body = UpdateIngredientRequest(
+                        category = userIngredientsList[index].category,
+                        title = userIngredientsList[index].title,
+                        unit = userIngredientsList[index].unit
+                    )
+                    )
+                if( response.isSuccessful ) {
+                    response.body()?.let { userIngredientsList[index] = it }
+                }
+                else {
+                    addUserIngredient(category = userIngredientsList[index].category,
+                        title = userIngredientsList[index].title,
+                        unit = userIngredientsList[index].unit,
+                        index
+                    )
+                }
+            } catch (e: Exception) {
+                errorMessage = e.localizedMessage
+                Log.d("getUserIngredients", "getUserIngredients  ${errorMessage}")
+            }
+        }
+    }
+    fun addUserIngredient(category: String, title: String, unit: String, index: Int) {
+        viewModelScope.launch {
+            try {
+                val response = ApiClient.getApi(token ?: "").addUserIngredient(
+                    body = UpdateIngredientRequest(
+                        category = category,
+                        title = title,
+                        unit = unit
+                    )
+                )
+                if( response.isSuccessful ) {
+                     response.body()?.let { userIngredientsList[index] = it }
+                }
+            } catch (e: Exception) {
+                errorMessage = e.localizedMessage
+                Log.d("addUserIngredient", "addUserIngredient  ${errorMessage}")
+            }
+        }
+    }
+
 
 
 }
