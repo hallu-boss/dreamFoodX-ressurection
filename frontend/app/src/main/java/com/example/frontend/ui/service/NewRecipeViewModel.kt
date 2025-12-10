@@ -1,5 +1,6 @@
 package com.example.frontend.ui.service
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -8,7 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import kotlin.random.Random
 
 class NewRecipeViewModel : ViewModel() {
@@ -160,14 +165,66 @@ class NewRecipeViewModel : ViewModel() {
                         unit = unit
                     )
                 )
-                if( response.isSuccessful ) {
-                     response.body()?.let { userIngredientsList[index] = it }
+                if (response.isSuccessful) {
+                    response.body()?.let { userIngredientsList[index] = it }
                 }
             } catch (e: Exception) {
                 errorMessage = e.localizedMessage
                 Log.d("addUserIngredient", "addUserIngredient  ${errorMessage}")
             }
         }
+    }
+
+        fun prepareImagePart(uri: Uri?, context: Context): MultipartBody.Part? {
+            if (uri == null) return null
+
+            val inputStream = context.contentResolver.openInputStream(uri)!!
+            val bytes = inputStream.readBytes()
+
+            val requestFile = bytes
+                .toRequestBody("image/*".toMediaType())
+
+            return MultipartBody.Part.createFormData(
+                "image",
+                "photo.jpg",
+                requestFile
+            )
+        }
+
+        fun createRecipe( context: Context) {
+            val recipeInfo = NewRecipeInfo(
+                title = nazwa,
+                visible = czyPubliczny,
+                category = kategoria,
+                price = cena.toDouble(),
+                description = "",
+                steps = steps
+            )
+
+            viewModelScope.launch {
+                try {
+                    val gson = Gson()
+                    val json = gson.toJson(recipeInfo)
+                    val recipeBody = json.toRequestBody("application/json".toMediaType())
+
+                    val imagePart = prepareImagePart(obraz, context)
+
+                    val res = ApiClient.getApi(token ?: "").createRecipe(
+                        image = imagePart,
+                        recipeData = recipeBody
+                    )
+
+                    if (res.isSuccessful) {
+                        println("OK: ${res.body()}")
+                    } else {
+                        println("ERROR: ${res.code()} ${res.errorBody()?.string()}")
+                    }
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
     }
 
 

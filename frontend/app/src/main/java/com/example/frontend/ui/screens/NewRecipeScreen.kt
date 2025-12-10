@@ -33,7 +33,6 @@ import com.example.frontend.ui.components.FullSizeButton
 import com.example.frontend.ui.components.Recipe.newRecipeIgredientsTab
 import com.example.frontend.ui.components.Recipe.newRecipeInformationTab
 import com.example.frontend.ui.components.Recipe.newRecipeStepsTab
-import com.example.frontend.ui.service.Ingredient
 import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.service.NewRecipeViewModel
 
@@ -117,7 +116,8 @@ fun NewRecipeScreen(navController: NavHostController,
                     }
 
                     if( !isError) {
-                        TODO() // wysyłanie na serwer nowego przepisu
+                        newRecipeViewModel.createRecipe(context)
+                        navController.popBackStack()
                     }
                 })}
         }
