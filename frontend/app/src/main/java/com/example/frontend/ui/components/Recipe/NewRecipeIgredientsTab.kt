@@ -9,6 +9,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -24,13 +28,22 @@ import com.example.frontend.ui.service.NewRecipeViewModel
 fun newRecipeIgredientsTab (newRecipeViewModel : NewRecipeViewModel, userId: Int) {
     Text("Edytuj swoje składniki", fontSize = 20.sp)
     newRecipeViewModel.userIngredientsList.forEach  {
-            skladnik -> IngredientEditCart(skladnik, newRecipeViewModel)
+            skladnik -> IngredientEditCart(
+                        ingredient = skladnik,
+                        newRecipeViewModel = newRecipeViewModel,
+                        onSaveChanges = {ingredient ->
+                            val index = newRecipeViewModel.userIngredientsList.indexOfFirst { it.id == ingredient.id }
+                            if( index != -1 ) {
+                                newRecipeViewModel.userIngredientsList[index] = ingredient
+                            }
+                        }
+            )
     }
     Button(
         modifier = Modifier.fillMaxWidth(),
         onClick = {newRecipeViewModel.userIngredientsList.add(
             Ingredient(
-                id = -1,
+                id = newRecipeViewModel.nextUnicateRandIndex(),
                 title = "",
                 unit = newRecipeViewModel.utilsList.first(),
                 category = newRecipeViewModel.ingredientCategoryList.first(),
@@ -52,7 +65,13 @@ fun newRecipeIgredientsTab (newRecipeViewModel : NewRecipeViewModel, userId: Int
 
 
 @Composable
-fun IngredientEditCart(ingredient: Ingredient, newRecipeViewModel: NewRecipeViewModel) {
+fun IngredientEditCart(ingredient: Ingredient, newRecipeViewModel: NewRecipeViewModel, onSaveChanges : (Ingredient) -> Unit) {
+    var nazwa by remember { mutableStateOf(ingredient.title) }
+    var kategoria by remember { mutableStateOf(ingredient.category) }
+    var jednostka by remember { mutableStateOf(ingredient.unit) }
+
+    var showButtonSave by remember { mutableStateOf(false) }
+
     Column (
         modifier = Modifier
             .fillMaxWidth()
@@ -63,27 +82,48 @@ fun IngredientEditCart(ingredient: Ingredient, newRecipeViewModel: NewRecipeView
     ) {
 
         InputField(
-            label = ingredient.title,
-            value = ingredient.title,
-            onValueChange = {
-                ingredient.title = it
-                newRecipeViewModel.nazwa = ingredient.title
+            label = "Nazwa składnika",
+            value = nazwa,
+            onValueChange = {nazwa = it
+            showButtonSave = true
             }
         )
         SelectBox(
             options = newRecipeViewModel.ingredientCategoryList,
-            selectedOption = ingredient.category,
-            onOptionSelected = {ingredient.category = it},
-            label = ingredient.category
+            selectedOption = kategoria,
+            onOptionSelected = {
+                kategoria = it
+                showButtonSave = true
+                               },
+            label = "Kategoria"
         )
 
         SelectBox(
             options = newRecipeViewModel.utilsList,
-            selectedOption = ingredient.unit,
-            onOptionSelected = {ingredient.unit = it},
-            label = ingredient.unit
+            selectedOption = jednostka,
+            onOptionSelected = {
+                jednostka = it
+                showButtonSave = true
+                               },
+            label = "Jednostka"
         )
 
+        if( showButtonSave ) {
+            Button(
+                modifier = Modifier.fillMaxWidth().padding(2.dp),
+                onClick = {
+                onSaveChanges(Ingredient(
+                    id = ingredient.id,
+                    title = nazwa,
+                    unit = jednostka,
+                    category = kategoria,
+                    ownerId = ingredient.ownerId
+                ) )
+                showButtonSave = false
+            }) {
+                Text("Zapisz zmian składnika")
+            }
+        }
 
     }
 }

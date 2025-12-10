@@ -32,9 +32,9 @@ class NewRecipeViewModel : ViewModel() {
     private fun isUnicate( wylosowana: Int ) : Boolean {
         val index = userIngredientsList.indexOfFirst { it.id == wylosowana }
         if( index != -1 ) {
-            return true
+            return false
         }
-        return false
+        return true
     }
 
 //    Zmienne z informacji
