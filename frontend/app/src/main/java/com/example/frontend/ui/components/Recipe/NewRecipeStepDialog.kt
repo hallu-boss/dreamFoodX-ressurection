@@ -57,7 +57,7 @@ fun NewRecipeStepDialog(
 
     LaunchedEffect(Unit ) {
         newRecipeViewModel.getPublicIngredients()
-        Log.e("NewRecipeStepDialog", "${newRecipeViewModel.publicIngredientsList.size}")
+        Log.e("allIngredientsList", "${newRecipeViewModel.allIngredientsList.size}")
 
     }
 
@@ -67,7 +67,9 @@ fun NewRecipeStepDialog(
 
     LaunchedEffect(selectedCategory) {
         if( selectedOption.value == stepType[0]) {
-            val filteredIngredients = newRecipeViewModel.publicIngredientsList
+            newRecipeViewModel.setSelectableIngrendient()
+
+            val filteredIngredients = newRecipeViewModel.allIngredientsList
                 .filter { it.category == selectedCategory }
                 .map { ingredient ->
                     Ingredient(
@@ -77,7 +79,7 @@ fun NewRecipeStepDialog(
                         category = ingredient.category,
                         ownerId = ingredient.ownerId
                     )
-                }
+                }.sortedBy { it.title }
 
 
             ingredientInCategory.clear()

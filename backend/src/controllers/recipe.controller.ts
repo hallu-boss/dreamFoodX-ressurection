@@ -441,13 +441,15 @@ export const createRecipe = async (
 ) => {
   try {
     const userId = (req as any).user.id;
-
+    console.log("createRecipe: ", userId)
+  
     // Parsowanie danych przepisu z JSON
     const recipeData: NewRecipeInfo = req.body.recipeData
       ? JSON.parse(req.body.recipeData)
       : req.body;
 
     const { title, description, category, visible, price, steps } = recipeData;
+    console.log("createRecipe: ", title, description, category, visible, price, steps)
 
     // Sprawdź czy wszystkie składniki istnieją
     for (const step of steps) {
@@ -491,6 +493,7 @@ export const createRecipe = async (
         throw new Error('Failed to upload image to Cloudinary');
       }
     }
+    console.log("createRecipe: ", imageUrl)
 
     // Utwórz przepis z krokami
     const newRecipe = await prisma.recipe.create({
@@ -510,6 +513,7 @@ export const createRecipe = async (
         steps: true,
       },
     });
+    console.log("createRecipe: ", newRecipe)
 
     res.status(201).json({
       message: 'Przepis utworzony pomyślnie',

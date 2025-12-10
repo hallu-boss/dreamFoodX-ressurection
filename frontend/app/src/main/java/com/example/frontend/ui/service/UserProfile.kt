@@ -1,9 +1,6 @@
 package com.example.frontend.ui.service
 
-import Review
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import kotlinx.serialization.Serializable
 
 data class UserProfile(
@@ -48,6 +45,15 @@ data class UpdateIngredientRequest(
     val category: String,
     val title: String,
     val unit: String
+)
+
+data class NewRecipeInfo(
+    val title: String,
+    val description: String,
+    val category: String,
+    val visible: Boolean,
+    val price: Double,
+    val steps: SnapshotStateList<Step>
 )
 
 data class Step(
