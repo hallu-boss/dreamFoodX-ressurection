@@ -19,7 +19,7 @@ class NewRecipeViewModel : ViewModel() {
     var errorMessage by mutableStateOf<String?>(null)
     var responseMmessage by mutableStateOf<String?>(null)
 
-    private var rand = Random(-1000)
+    private var rand = Random(1000)
 
      fun nextUnicateRandIndex() : Int {
          var wylosowana = rand.nextInt()
@@ -125,8 +125,9 @@ class NewRecipeViewModel : ViewModel() {
     fun updateIngredient(index: Int) {
         viewModelScope.launch {
             try {
+                val errVal = Float.NaN
                 val response = ApiClient.getApi(token ?: "").updateIngredient(
-                    id = userIngredientsList[index].id,
+                    id = if (userIngredientsList[index].id < 0) errVal else userIngredientsList[index].id.toFloat(),
                     body = UpdateIngredientRequest(
                         category = userIngredientsList[index].category,
                         title = userIngredientsList[index].title,
