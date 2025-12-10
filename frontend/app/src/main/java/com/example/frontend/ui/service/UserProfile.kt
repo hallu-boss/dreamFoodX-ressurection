@@ -44,6 +44,12 @@ data class Ingredient (
     val ownerId: Int? = null
 )
 
+data class UpdateIngredientRequest(
+    val category: String,
+    val title: String,
+    val unit: String
+)
+
 data class Step(
     var title: String,
     var stepType: StepType,
