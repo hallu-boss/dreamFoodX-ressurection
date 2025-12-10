@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class NewRecipeViewModel : ViewModel() {
     val categories = listOf("wszystkie", "przekąska", "obiad", "sniadanie", "dodatek", "napój")
@@ -17,6 +18,24 @@ class NewRecipeViewModel : ViewModel() {
     var token by mutableStateOf<String?>(null)
     var errorMessage by mutableStateOf<String?>(null)
     var responseMmessage by mutableStateOf<String?>(null)
+
+    private var rand = Random(0)
+
+     fun nextUnicateRandIndex() : Int {
+         var wylosowana = rand.nextInt()
+         while ( !isUnicate( wylosowana ) ) {
+             wylosowana = rand.nextInt()
+         }
+        return wylosowana
+    }
+
+    private fun isUnicate( wylosowana: Int ) : Boolean {
+        val index = userIngredientsList.indexOfFirst { it.id == wylosowana }
+        if( index != -1 ) {
+            return true
+        }
+        return false
+    }
 
 //    Zmienne z informacji
 
