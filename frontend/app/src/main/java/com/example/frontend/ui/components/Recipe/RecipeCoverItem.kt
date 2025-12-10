@@ -163,7 +163,7 @@ fun CorrectButton(recipe: RecipeCover,
             )
         }
     }
-    else if( recipe.price == 0.0 ){
+    else if( recipe.price == 0.0 && !(recipe.isOwned == true)){
 
 
         Button(onClick = {
