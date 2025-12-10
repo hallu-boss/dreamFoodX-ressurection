@@ -108,7 +108,7 @@ interface ApiService {
 
     @PATCH("ingredients/{id}")
     suspend fun updateIngredient(
-        @Path("id") id: Int,
+        @Path("id") id: Float,
         @Body body: UpdateIngredientRequest
     ): Response<Ingredient>
 

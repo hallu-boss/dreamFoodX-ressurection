@@ -50,7 +50,7 @@ fun newRecipeIgredientsTab (newRecipeViewModel : NewRecipeViewModel, userId: Int
         modifier = Modifier.fillMaxWidth(),
         onClick = {newRecipeViewModel.userIngredientsList.add(
             Ingredient(
-                id = newRecipeViewModel.nextUnicateRandIndex(),
+                id = -newRecipeViewModel.nextUnicateRandIndex(),
                 title = "",
                 unit = newRecipeViewModel.utilsList.first(),
                 category = newRecipeViewModel.ingredientCategoryList.first(),
