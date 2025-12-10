@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.frontend.ui.components.RecipeCard.getPrice
+import com.example.frontend.ui.components.Recipe.getPrice
 
 @Composable
 fun basicInformation(recipeDetail: RecipeResponse ) {

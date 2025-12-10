@@ -48,7 +48,7 @@ import com.example.firstcomposeap.ui.navigation.main.MainLayout
 import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.service.RecipeViewModel
 import  com.example.frontend.ui.components.ErrorPlopup
-import com.example.frontend.ui.components.RecipeCard.NetworkImage
+import com.example.frontend.ui.components.Recipe.NetworkImage
 import com.example.frontend.ui.components.recipeDetails.IngredientList
 import com.example.frontend.ui.components.recipeDetails.StarRating
 import com.example.frontend.ui.components.recipeDetails.basicInformation

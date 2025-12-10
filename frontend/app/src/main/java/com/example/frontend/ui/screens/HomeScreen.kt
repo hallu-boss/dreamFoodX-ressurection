@@ -1,6 +1,5 @@
 package com.example.frontend.ui.screens
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.MainLayout
-import com.example.frontend.ui.components.RecipeCard.RecipeCoverItem
+import com.example.frontend.ui.components.Recipe.RecipeCoverItem
 import com.example.frontend.ui.components.RecipeFilter
 import com.example.frontend.ui.service.CartViewModel
 import com.example.frontend.ui.service.LoginViewModel
