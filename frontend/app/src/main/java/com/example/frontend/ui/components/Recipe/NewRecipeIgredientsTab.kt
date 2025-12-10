@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +27,11 @@ import com.example.frontend.ui.service.NewRecipeViewModel
 
 @Composable
 fun newRecipeIgredientsTab (newRecipeViewModel : NewRecipeViewModel, userId: Int) {
+
+    LaunchedEffect(Unit) {
+        newRecipeViewModel.getUserIngredients()
+    }
+
     Text("Edytuj swoje składniki", fontSize = 20.sp)
     newRecipeViewModel.userIngredientsList.forEach  {
             skladnik -> IngredientEditCart(
@@ -36,6 +42,10 @@ fun newRecipeIgredientsTab (newRecipeViewModel : NewRecipeViewModel, userId: Int
                             if( index != -1 ) {
                                 newRecipeViewModel.userIngredientsList[index] = ingredient
                             }
+
+                            // TODO aktualizacja -> dodanie
+                            // aktualizacja listy
+
                         }
             )
     }
@@ -54,12 +64,12 @@ fun newRecipeIgredientsTab (newRecipeViewModel : NewRecipeViewModel, userId: Int
         Text("Dodaj nowy składki" )
     }
 
-    Text("Twoje składniki", fontSize = 20.sp)
-
-    newRecipeViewModel.userIngredientsList.forEach { skladnik ->
-        if( skladnik.ownerId == userId)
-            IngredientCart(skladnik, userId)
-    }
+//    Text("Twoje składniki", fontSize = 20.sp)
+//
+//    newRecipeViewModel.userIngredientsList.forEach { skladnik ->
+//        if( skladnik.ownerId == userId)
+//            IngredientCart(skladnik, userId)
+//    }
 
 }
 

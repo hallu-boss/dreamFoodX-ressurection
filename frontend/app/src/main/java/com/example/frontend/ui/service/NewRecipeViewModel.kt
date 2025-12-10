@@ -98,7 +98,24 @@ class NewRecipeViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 errorMessage = e.localizedMessage
-                Log.d("Review: ", "getRecipeUserRating  ${errorMessage}")
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    fun getUserIngredients() {
+        isLoading = true
+        viewModelScope.launch {
+            try {
+                val response = ApiClient.getApi(token ?: "").getUserIngredients()
+                if( response.isSuccessful ) {
+                    userIngredientsList.clear()
+                    response.body()?.let { userIngredientsList.addAll(it) }
+                }
+            } catch (e: Exception) {
+                errorMessage = e.localizedMessage
+                Log.d("getUserIngredients", "getUserIngredients  ${errorMessage}")
             } finally {
                 isLoading = false
             }
