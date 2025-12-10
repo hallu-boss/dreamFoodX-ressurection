@@ -42,8 +42,8 @@ export const getRecipeCovers = async (
     // Pobierz parametry zapytania
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const limit = Math.min(
-      50,
-      Math.max(1, parseInt(req.query.limit as string) || 12),
+      100,
+      Math.max(1, parseInt(req.query.limit as string) || 4),
     );
     const type = req.query.type as string; // 'featured', 'new', 'popular', 'category'
     const category = req.query.category as string;
@@ -142,12 +142,13 @@ export const getRecipeCovers = async (
     }
 
     // Pobierz przepisy z wszystkimi potrzebnymi danymi
-    const recipes = await prisma.recipe.findMany({
+    var recipes = await prisma.recipe.findMany({
       where: whereConditions,
       select: {
         id: true,
         title: true,
         description: true,
+        visible: true,
         category: true,
         price: true,
         image: true,
@@ -187,7 +188,65 @@ export const getRecipeCovers = async (
           : false,
       },
       orderBy: { createdAt: 'desc' }, // Domyślnie sortuj po dacie utworzenia
+      
+    
     });
+    
+    if( userId ) {
+      var recipesUser = await prisma.recipe.findMany({
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          category: true,
+          price: true,
+          visible: true,
+          image: true,
+          createdAt: true,
+          author: {
+            select: {
+              id: true,
+              name: true,
+              surname: true,
+            },
+          },
+          reviews: {
+            select: {
+              rating: true,
+            },
+          },
+          steps: {
+            select: {
+              stepType: true,
+              time: true,
+              ingredient: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
+          purchasers: userId
+            ? {
+                where: {
+                  id: userId,
+                },
+                select: {
+                  id: true,
+                },
+              }
+            : false,
+        },
+        orderBy: { createdAt: 'desc' }, // Domyślnie sortuj po dacie utworzenia
+        
+        
+      });
+      recipes = recipes.concat(recipesUser);
+      const uniqueRecipes = Array.from(
+        new Map(recipes.map(r => [r.id, r])).values()
+      );
+      recipes = uniqueRecipes
+    }
 
     // Przetwórz dane dla każdego przepisu
     const processedRecipes = recipes.map((recipe) => {
@@ -249,6 +308,7 @@ export const getRecipeCovers = async (
       return {
         id: recipe.id,
         title: recipe.title,
+        visible: recipe.visible,
         description: recipe.description,
         category: recipe.category,
         price: Number(recipe.price), // Konwersja Decimal na number
@@ -309,6 +369,7 @@ export const getRecipeCovers = async (
         // Kategoria: sortuj według oceny malejąco
         filteredRecipes.sort((a, b) => b.averageRating - a.averageRating);
         break;
+      
 
       default:
         // Domyślnie sortuj według daty utworzenia malejąco
