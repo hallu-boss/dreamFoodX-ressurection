@@ -18,6 +18,7 @@ import retrofit2.http.POST
 import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -97,9 +98,21 @@ interface ApiService {
     @POST("payment/create-intent") // Sugerowana nazwa endpointu na backendzie
     suspend fun createPaymentIntent(@Body request: CreatePaymentIntentRequest): Response<PaymentIntentResponse>
 
+//    ************* SKŁADNIKI PRZEPISÓW    *********************** //
+
     @GET("ingredients/all")
     suspend fun getPublicIngredients() : Response<List<Ingredient>>
 
+    @GET("ingredients/user")
+    suspend fun getUserIngredients() : Response<List<Ingredient>>
+
+    @POST("ingredients/add")
+    suspend fun addUserIngredient() : Response<List<Ingredient>>
+
+
+
+//    @PATCH("ingredients/all")
+//    suspend fun getPublicIngredients() : Response<List<Ingredient>>
 
 
 
