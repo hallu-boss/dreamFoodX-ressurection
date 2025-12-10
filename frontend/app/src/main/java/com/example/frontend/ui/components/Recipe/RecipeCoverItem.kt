@@ -1,4 +1,4 @@
-package com.example.frontend.ui.components.RecipeCard
+package com.example.frontend.ui.components.Recipe
 
 import RecipeCover
 import android.annotation.SuppressLint

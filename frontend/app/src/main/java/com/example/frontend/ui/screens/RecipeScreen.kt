@@ -27,7 +27,7 @@ import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.MainLayout
 import com.example.firstcomposeap.ui.navigation.main.Screen
 import com.example.frontend.ui.components.FullSizeButton
-import com.example.frontend.ui.components.RecipeCard.RecipeCoverItem
+import com.example.frontend.ui.components.Recipe.RecipeCoverItem
 import com.example.frontend.ui.components.RecipeFilter
 import com.example.frontend.ui.service.CartViewModel
 import com.example.frontend.ui.service.LoginViewModel
