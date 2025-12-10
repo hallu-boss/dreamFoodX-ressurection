@@ -41,11 +41,8 @@ fun newRecipeIgredientsTab (newRecipeViewModel : NewRecipeViewModel, userId: Int
                             val index = newRecipeViewModel.userIngredientsList.indexOfFirst { it.id == ingredient.id }
                             if( index != -1 ) {
                                 newRecipeViewModel.userIngredientsList[index] = ingredient
+                                newRecipeViewModel.updateIngredient(index)
                             }
-
-                            // TODO aktualizacja -> dodanie
-                            // aktualizacja listy
-
                         }
             )
     }

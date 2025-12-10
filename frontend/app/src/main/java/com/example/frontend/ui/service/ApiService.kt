@@ -107,12 +107,15 @@ interface ApiService {
     suspend fun getUserIngredients() : Response<List<Ingredient>>
 
     @POST("ingredients/add")
-    suspend fun addUserIngredient() : Response<List<Ingredient>>
+    suspend fun addUserIngredient(@Body body: UpdateIngredientRequest) : Response<Ingredient>
 
 
+    @PATCH("ingredients/{id}")
+    suspend fun updateIngredient(
+        @Path("id") id: Int,
+        @Body body: UpdateIngredientRequest
+    ): Response<Ingredient>
 
-//    @PATCH("ingredients/all")
-//    suspend fun getPublicIngredients() : Response<List<Ingredient>>
 
 
 

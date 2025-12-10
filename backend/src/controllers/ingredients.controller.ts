@@ -28,8 +28,10 @@ export const addIngredient = async (
 ) => {
   try {
     const userId = (req as any).user.id;
+    
 
     const { category, title, unit } = req.body;
+    console.log("addIngredient: ", userId, " ", category, title, unit )
 
     try {
       const ingredient = await prisma.ingredient.create({
@@ -102,6 +104,8 @@ export const updateIngredient = async (
     const ingredientId = parseInt(req.params.id);
 
     const { category, title, unit } = req.body;
+
+    console.log("updateIngredient: ", userId, " ", category, title, unit )
 
     // Walidacja ID
     if (isNaN(ingredientId)) {
