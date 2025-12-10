@@ -55,13 +55,13 @@ fun RecipeScreen(navController: NavHostController,
         "Polubione",
         "Kupione"
     )
-    var selectedTabIndex by remember { mutableStateOf(0) }
+
 
     var showAddButton by remember { mutableStateOf(false) }
 
-    LaunchedEffect(selectedTabIndex, loginViewModel.userProfile) {
+    LaunchedEffect(recipeView.selectedTabIndex, loginViewModel.userProfile) {
         filteredRecipes = recipes
-        showAddButton = (selectedTabIndex == 0)
+        showAddButton = (recipeView.selectedTabIndex == 0)
 
     }
 
@@ -95,11 +95,11 @@ fun RecipeScreen(navController: NavHostController,
                     )
                 }
                 
-                TabRow(selectedTabIndex = selectedTabIndex) {
+                TabRow(selectedTabIndex = recipeView.selectedTabIndex) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
-                            selected = selectedTabIndex == index,
-                            onClick = { selectedTabIndex = index },
+                            selected = recipeView.selectedTabIndex == index,
+                            onClick = { recipeView.selectedTabIndex = index },
                             text = { Text(title, fontSize = 22.sp) }
                         )
                     }
@@ -128,7 +128,7 @@ fun RecipeScreen(navController: NavHostController,
                             items(filteredRecipes) { recipe ->
                                 val isRecipeInCart = cartViewModel.cart?.items?.any { it.recipeId == recipe.id } == true
                                 var isRecipeTODisplay = false
-                                when (selectedTabIndex) {
+                                when (recipeView.selectedTabIndex) {
                                     0 -> {
                                         isRecipeTODisplay = recipe.isOwned
                                     }

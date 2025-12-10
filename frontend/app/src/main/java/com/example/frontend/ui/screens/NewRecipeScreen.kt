@@ -39,7 +39,8 @@ import com.example.frontend.ui.service.NewRecipeViewModel
 @Composable
 fun NewRecipeScreen(navController: NavHostController,
                loginViewModel: LoginViewModel = viewModel(),
-            newRecipeViewModel : NewRecipeViewModel = viewModel()
+            newRecipeViewModel : NewRecipeViewModel = viewModel(),
+                    onClose: () -> Unit
 ) {
     var selectedItem by remember { mutableStateOf("Moje przepisy") }
     val context = LocalContext.current
@@ -54,7 +55,7 @@ fun NewRecipeScreen(navController: NavHostController,
     LaunchedEffect(Unit) {
         newRecipeViewModel.token = loginViewModel.token
         if( newRecipeViewModel.userIngredientsList.isEmpty()) {
-            // TODO pobieranie skłądników użytkownika
+            newRecipeViewModel.getUserIngredients()
         }
      }
 
@@ -117,7 +118,7 @@ fun NewRecipeScreen(navController: NavHostController,
 
                     if( !isError) {
                         newRecipeViewModel.createRecipe(context)
-                        navController.popBackStack()
+                        onClose()
                     }
                 })}
         }
