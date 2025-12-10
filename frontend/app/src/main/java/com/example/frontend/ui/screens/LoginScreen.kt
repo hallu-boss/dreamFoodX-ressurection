@@ -2,7 +2,6 @@ package com.example.frontend.ui.screens
 
 import android.app.Activity
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,9 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontend.R
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.Screen
@@ -161,15 +157,15 @@ fun LoginScreen(navController: NavHostController,
             )
             Spacer(modifier = Modifier.height(5.dp))
 
-            TextButton(onClick = {}, modifier = Modifier.align(Alignment.End)) {
-                Text(text = "Przypomij hasło",
-                    modifier = Modifier.clickable {},
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 20.sp,
-                    textDecoration = TextDecoration.Underline
-                )
-
-            }
+//            TextButton(onClick = {}, modifier = Modifier.align(Alignment.End)) {
+//                Text(text = "Przypomij hasło",
+//                    modifier = Modifier.clickable {},
+//                    color = MaterialTheme.colorScheme.secondary,
+//                    fontSize = 20.sp,
+//                    textDecoration = TextDecoration.Underline
+//                )
+//
+//            }
 
             Spacer(modifier = Modifier.height(16.dp))
             FullSizeButton(

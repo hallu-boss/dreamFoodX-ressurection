@@ -4,12 +4,17 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -44,6 +49,13 @@ fun HomeScreen(navController: NavHostController,
     if (!loginViewModel.isLoggedIn()) {
         navController.navigate("login")
     }
+
+    var nrPage by remember { mutableStateOf(1 ) }
+
+    LaunchedEffect(nrPage) {
+
+    }
+
     MainLayout(
         navController = navController,
         selectedItem = selectedItem,
@@ -79,6 +91,16 @@ fun HomeScreen(navController: NavHostController,
                         )
                     }
                     else -> {
+//                        PaginationWidget(
+//                            currentPage = recipeView.paginationHomePage?.page ?: 1,
+//                            totalPages = recipeView.paginationHomePage?.totalPages ?: 2,
+//                            onPageChange = { nrPage ->
+//                                Log.e("Home", "$nrPage")
+//                                recipeView.loadRecipes(loginViewModel.token ?: "", nrPage )
+//                            }
+//                        )
+//                        Spacer(Modifier.height(5.dp))
+
                         LazyColumn(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier.fillMaxSize()
@@ -107,6 +129,7 @@ fun HomeScreen(navController: NavHostController,
 
                             }
                         }
+
                     }
                 }
             }
@@ -115,3 +138,36 @@ fun HomeScreen(navController: NavHostController,
 
 }
 
+
+@Composable
+fun PaginationWidget(
+    currentPage: Int,
+    totalPages: Int,
+    onPageChange: (Int) -> Unit
+) {
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth().padding(16.dp)
+    ) {
+        Button(
+            onClick = { if (currentPage > 1) onPageChange(currentPage - 1) },
+            enabled = currentPage > 1
+        ) {
+            Text("Poprzednia", color = MaterialTheme.colorScheme.secondary)
+        }
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Text("$currentPage / $totalPages")
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Button(
+            onClick = { if (currentPage < totalPages) onPageChange(currentPage + 1) },
+            enabled = currentPage < totalPages
+        ) {
+            Text("Następna", color = MaterialTheme.colorScheme.secondary)
+        }
+    }
+}

@@ -1,6 +1,7 @@
 package com.example.frontend.ui.service
 
 import Comment
+import Pagination
 import RecipeCover
 import RecipeResponse
 import Review
@@ -8,10 +9,12 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import retrofit2.http.Query
 
 class RecipeViewModel : ViewModel() {
 
@@ -21,19 +24,27 @@ class RecipeViewModel : ViewModel() {
     var errorMessage by mutableStateOf<String?>(null)
     var responseMmessage by mutableStateOf<String?>(null)
 
-
+    var selectedTabIndex by  mutableStateOf(0)
     var isLoadingRating by mutableStateOf(false)
         private set
     var recipeUserRating by mutableStateOf<Int?>(0)
         private set
 
-    fun loadRecipes(token: String) {
+    var paginationHomePage by mutableStateOf<Pagination?>(Pagination(
+        total = 0,
+        page = 1,
+        limit = 1,
+        totalPages = 1
+    ))
+
+    fun loadRecipes(token: String, page: Int = 1, limit: Int = 25) {
         viewModelScope.launch {
             isLoading = true
             try {
-                val response = ApiClient.getApi(token).getRecipeCovers(page = 1)
+                val response = ApiClient.getApi(token).getRecipeCovers(page = 1, limit = limit)
                 if (response.isSuccessful) {
                     recipes = response.body()?.recipes ?: emptyList()
+                    response.body()?.pagination.let { paginationHomePage = it?.copy() }
                 } else {
                     errorMessage = "Błąd: ${response.code()}"
                 }

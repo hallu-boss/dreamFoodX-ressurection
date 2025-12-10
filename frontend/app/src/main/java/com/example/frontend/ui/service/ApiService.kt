@@ -53,7 +53,7 @@ interface ApiService {
     @GET("recipe/covers")
     suspend fun getRecipeCovers(
         @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 12,
+        @Query("limit") limit: Int = 25,
         @Query("type") type: String? = null,
         @Query("category") category: String? = null,
         @Query("search") search: String? = null
