@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.firstcomposeap.ui.navigation.main.MainLayout
-import com.example.frontend.ui.components.RecipeCard.RecipeCoverItem
 import com.example.frontend.ui.service.LoginViewModel
 import com.example.frontend.ui.service.RecipeViewModel
 

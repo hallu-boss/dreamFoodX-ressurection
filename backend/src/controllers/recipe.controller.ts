@@ -43,7 +43,7 @@ export const getRecipeCovers = async (
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const limit = Math.min(
       100,
-      Math.max(1, parseInt(req.query.limit as string) || 4),
+      Math.max(1, parseInt(req.query.limit as string) || 12),
     );
     const type = req.query.type as string; // 'featured', 'new', 'popular', 'category'
     const category = req.query.category as string;
