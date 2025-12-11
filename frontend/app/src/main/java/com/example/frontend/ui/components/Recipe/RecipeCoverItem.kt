@@ -1,4 +1,4 @@
-package com.example.frontend.ui.components.Recipe
+package com.example.frontend.ui.components.RecipeCard
 
 import RecipeCover
 import android.annotation.SuppressLint
@@ -152,7 +152,7 @@ fun CorrectButton(recipe: RecipeCover,
 
 
 
-    if(displayBuyButton && recipe.price > 0 && !(recipe.isOwned == true || recipe.isPurchased == true)) {
+    if(displayBuyButton && recipe.price > 0 && !(recipe.isOwned || recipe.isPurchased)) {
         Button(onClick = {
             onAddToCart(recipe.id)
             isInCartRemember = !isInCartRemember
@@ -163,7 +163,7 @@ fun CorrectButton(recipe: RecipeCover,
             )
         }
     }
-    else if( recipe.price == 0.0 && !(recipe.isOwned == true)){
+    else if(!recipe.isOwned && recipe.price == 0.0){
 
 
         Button(onClick = {
