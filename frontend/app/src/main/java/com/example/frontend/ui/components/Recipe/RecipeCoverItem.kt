@@ -1,4 +1,4 @@
-package com.example.frontend.ui.components.RecipeCard
+package com.example.frontend.ui.components.Recipe
 
 import RecipeCover
 import android.annotation.SuppressLint
@@ -53,7 +53,7 @@ private fun getStarColor(ocena: Double): Color {
     }
 }
 
-fun getPrice(cena : Double) : String {
+public fun getPrice(cena : Double) : String {
     return when {
         cena == 0.toDouble() -> "Darmowy"
         else -> String.format("%.2f zł", cena)
